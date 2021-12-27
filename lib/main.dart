@@ -1,18 +1,57 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tiktok/home.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:tiktok/welcome_page.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(HomePage());
+  runApp(const MyApp());
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp();
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'TikTok',
+      home: HomePage(),
+    );
+  }
+}
+
+class InitializerWidget extends StatefulWidget {
+  const InitializerWidget({Key? key}) : super(key: key);
+
+  @override
+  _InitializerWidgetState createState() => _InitializerWidgetState();
+}
+
+class _InitializerWidgetState extends State<InitializerWidget> {
+  FirebaseAuth? _auth;
+  User? user;
+  bool isLoading = true;
+  @override
+  void initState() {
+    super.initState();
+    _auth = FirebaseAuth.instance;
+    user = _auth!.currentUser;
+    isLoading = false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return isLoading
+        ? Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          )
+        : user == null
+            ? HomePage()
+            : WelcomePage();
   }
 }

@@ -3,371 +3,406 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:tiktok/login.dart';
-import 'package:provider/provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:tiktok/user_models.dart';
+import 'package:tiktok/welcome_page.dart';
 
-import 'auth_services.dart';
+import 'login.dart';
 
 class SignupPage extends StatefulWidget {
-  //bool _secureText = true;
+  const SignupPage({Key? key}) : super(key: key);
 
   @override
   _SignupPageState createState() => _SignupPageState();
 }
 
 class _SignupPageState extends State<SignupPage> {
-  //final _auth = FirebaseAuth.instance;
+  final _auth = FirebaseAuth.instance;
 
+  // string for displaying the error Message
   String? errorMessage;
-
-  final _formkey = GlobalKey<FormState>();
 
   bool _secureText = true;
   bool _securityText = true;
 
-  TextEditingController fnameController = TextEditingController();
-  TextEditingController lnameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController numController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController confirmpasswordController = TextEditingController();
+  // our form key
+  final _formKey = GlobalKey<FormState>();
+  // editing Controller
+  final firstNameEditingController = TextEditingController();
+  final lastNameEditingController = TextEditingController();
+  final numEditingController = TextEditingController();
+  final emailEditingController = TextEditingController();
+  final passwordEditingController = TextEditingController();
+  final confirmPasswordEditingController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        resizeToAvoidBottomInset: true,
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          elevation: 0,
-          brightness: Brightness.light,
-          backgroundColor: Colors.white,
-          leading: IconButton(
+    //first name field
+    final firstNameField = TextFormField(
+        autofocus: false,
+        controller: firstNameEditingController,
+        keyboardType: TextInputType.name,
+        validator: (value) {
+          RegExp regex = RegExp(r'^.{3,}$');
+          if (value!.isEmpty) {
+            return ("First Name cannot be Empty");
+          }
+          if (!regex.hasMatch(value)) {
+            return ("Enter Valid name(Min. 3 Character)");
+          }
+          return null;
+        },
+        onSaved: (value) {
+          firstNameEditingController.text = value!;
+        },
+        maxLength: 30,
+        textInputAction: TextInputAction.next,
+        decoration: InputDecoration(
+          counterText: "",
+          prefixIcon: Icon(Icons.account_circle),
+          contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+          enabledBorder:
+              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          border:
+              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          labelText: "First Name",
+        ));
+
+    //second name field
+    final secondNameField = TextFormField(
+        autofocus: false,
+        controller: lastNameEditingController,
+        keyboardType: TextInputType.name,
+        validator: (value) {
+          if (value!.isEmpty) {
+            return ("Second Name cannot be Empty");
+          }
+          return null;
+        },
+        onSaved: (value) {
+          lastNameEditingController.text = value!;
+        },
+        maxLength: 20,
+        textInputAction: TextInputAction.next,
+        decoration: InputDecoration(
+          counterText: "",
+          prefixIcon: Icon(Icons.account_circle),
+          contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+          enabledBorder:
+              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          border:
+              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          labelText: "Last Name",
+        ));
+
+    //email field
+    final emailField = TextFormField(
+        autofocus: false,
+        controller: emailEditingController,
+        keyboardType: TextInputType.emailAddress,
+        validator: (value) {
+          if (value!.isEmpty) {
+            return ("Please Enter Your Email");
+          }
+          // reg expression for email validation
+          if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
+              .hasMatch(value)) {
+            return ("Please Enter a valid email");
+          }
+          return null;
+        },
+        onSaved: (value) {
+          firstNameEditingController.text = value!;
+        },
+        textInputAction: TextInputAction.next,
+        decoration: InputDecoration(
+          prefixIcon: Icon(Icons.mail),
+          contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+          enabledBorder:
+              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          border:
+              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          labelText: "Email Address",
+        ));
+
+    //num field
+    final numField = TextFormField(
+        autofocus: false,
+        controller: numEditingController,
+        keyboardType: TextInputType.number,
+        maxLength: 10,
+        validator: (value) {
+          if (value!.isEmpty) {
+            return ("Please enter a number");
+          }
+          ;
+          if (value.length < 10) {
+            return ("Enter 10 digits");
+          }
+        },
+        onSaved: (value) {
+          firstNameEditingController.text = value!;
+        },
+        textInputAction: TextInputAction.next,
+        decoration: InputDecoration(
+          counterText: "",
+          prefixIcon: Icon(Icons.phone),
+          contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+          enabledBorder:
+              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          border:
+              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          labelText: "Phone Number",
+        ));
+
+    //password field
+    final passwordField = TextFormField(
+        autofocus: false,
+        controller: passwordEditingController,
+        obscureText: _secureText,
+        validator: (value) {
+          RegExp regex = new RegExp(r'^.{6,}$');
+          if (value!.isEmpty) {
+            return ("Password is required for login");
+          }
+          if (!regex.hasMatch(value)) {
+            return ("Enter Valid Password(Min. 6 Character)");
+          }
+        },
+        onSaved: (value) {
+          firstNameEditingController.text = value!;
+        },
+        textInputAction: TextInputAction.next,
+        decoration: InputDecoration(
+          prefixIcon: Icon(Icons.vpn_key),
+          suffixIcon: IconButton(
+            icon: Icon(_secureText ? Icons.remove_red_eye : Icons.security),
             onPressed: () {
-              Navigator.pop(context);
+              setState(() {
+                _secureText = !_secureText;
+              });
             },
-            icon: Icon(
-              Icons.arrow_back_ios,
-              size: 20,
-              color: Colors.black,
+          ),
+          contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+          enabledBorder:
+              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          border:
+              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          labelText: "Password",
+        ));
+
+    //confirm password field
+    final confirmPasswordField = TextFormField(
+        autofocus: false,
+        controller: confirmPasswordEditingController,
+        obscureText: _securityText,
+        validator: (value) {
+          if (confirmPasswordEditingController.text !=
+              passwordEditingController.text) {
+            return "Password don't match";
+          }
+          return null;
+        },
+        onSaved: (value) {
+          confirmPasswordEditingController.text = value!;
+        },
+        textInputAction: TextInputAction.done,
+        decoration: InputDecoration(
+          prefixIcon: Icon(Icons.vpn_key),
+          suffixIcon: IconButton(
+            icon: Icon(_securityText ? Icons.remove_red_eye : Icons.security),
+            onPressed: () {
+              setState(() {
+                _securityText = !_securityText;
+              });
+            },
+          ),
+          contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+          enabledBorder:
+              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          border:
+              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          labelText: "Confirm Password",
+        ));
+
+    //signup button
+    final signUpButton = Material(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+      color: Colors.pinkAccent,
+      child: MaterialButton(
+          padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+          minWidth: MediaQuery.of(context).size.width,
+          height: 60,
+          elevation: 5,
+          onPressed: () {
+            signUp(emailEditingController.text, passwordEditingController.text);
+          },
+          child: Text(
+            "Sign Up",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+          )),
+    );
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: Colors.black,
+            size: 20,
+          ),
+          onPressed: () {
+            // passing this to our root
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Container(
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(36.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        Text(
+                          "Sign Up",
+                          style: TextStyle(
+                              fontSize: 30, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          "Create an account",
+                          style:
+                              TextStyle(fontSize: 20, color: Colors.grey[700]),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 45),
+                    firstNameField,
+                    SizedBox(height: 35),
+                    secondNameField,
+                    SizedBox(height: 35),
+                    emailField,
+                    SizedBox(height: 35),
+                    numField,
+                    SizedBox(height: 35),
+                    passwordField,
+                    SizedBox(height: 35),
+                    confirmPasswordField,
+                    SizedBox(height: 35),
+                    signUpButton,
+                    SizedBox(height: 20),
+                    RichText(
+                      text: TextSpan(
+                          text: "Already have an account?",
+                          style: TextStyle(
+                            color: Colors.grey,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: "Signin",
+                              style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () async {
+                                  await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => LoginPage()));
+                                },
+                            ),
+                          ]),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            key: _formkey,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Column(
-                children: <Widget>[
-                  Text(
-                    "Sign Up",
-                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    "Create an account",
-                    style: TextStyle(fontSize: 20, color: Colors.grey[700]),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              TextFormField(
-                autofocus: false,
-                controller: fnameController,
-                keyboardType: TextInputType.name,
-                validator: (value) {
-                  RegExp regex = new RegExp(r'^.{30,}$');
-                  if (value!.isEmpty) {
-                    return ("First name cannot be empty");
-                  }
-                  if (!regex.hasMatch(value)) {
-                    return ("Enter the valid name(Min. 30 Characters)");
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  fnameController.text = value!;
-                },
-                maxLength: 30,
-                textInputAction: TextInputAction.next,
-                decoration: InputDecoration(
-                  counterText: "",
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey)),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey)),
-                  labelText: "First Name",
-                ),
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              TextFormField(
-                controller: lnameController,
-                keyboardType: TextInputType.name,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return ("Last name cannot be empty");
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  lnameController.text = value!;
-                },
-                maxLength: 20,
-                decoration: InputDecoration(
-                  counterText: "",
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey)),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey)),
-                  labelText: "Last Name",
-                ),
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              TextFormField(
-                controller: emailController,
-                keyboardType: TextInputType.emailAddress,
-                /*validator: (value) {
-                    if (value!.isEmpty) {
-                      return ("Please enter your Email");
-                    }
-                    if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+[a-z]")
-                        .hasMatch(value)) {
-                      return ("Please enter a Valid Email");
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    emailController.text = value!;
-                  },*/
-                textInputAction: TextInputAction.next,
-                decoration: InputDecoration(
-                  counterText: "",
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey)),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey)),
-                  labelText: "Email Id",
-                ),
-              ),
-              SizedBox(
-                height: 35,
-              ),
-              TextFormField(
-                controller: numController,
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value!.length < 10) return 'Provide mininum 10 numbers';
-
-                  if (value.isEmpty) {
-                    return ("Phone number cannot be empty");
-                  }
-                },
-                maxLength: 10,
-                decoration: InputDecoration(
-                  counterText: "",
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey)),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey)),
-                  labelText: "Phone Number",
-                ),
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              TextFormField(
-                controller: passwordController,
-                validator: (value) {
-                  RegExp regex = new RegExp(r'^.{8,}$');
-                  if (value!.isEmpty) {
-                    return ("Password is required for login");
-                  }
-                  if (!regex.hasMatch(value)) {
-                    return ("Enter Valid Password(Min. 8 Character)");
-                  }
-                },
-                onSaved: (value) {
-                  passwordController.text = value!;
-                },
-                decoration: InputDecoration(
-                  counterText: "",
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                        _secureText ? Icons.remove_red_eye : Icons.security),
-                    onPressed: () {
-                      setState(() {
-                        _secureText = !_secureText;
-                      });
-                    },
-                  ),
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey)),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey)),
-                  labelText: "Password",
-                ),
-                obscureText: _secureText,
-              ),
-              SizedBox(
-                height: 35,
-              ),
-              TextFormField(
-                controller: confirmpasswordController,
-                validator: (value) {
-                  if (confirmpasswordController.text !=
-                      passwordController.text) {
-                    return "Password don't match";
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  confirmpasswordController.text = value!;
-                },
-                decoration: InputDecoration(
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                        _securityText ? Icons.remove_red_eye : Icons.security),
-                    onPressed: () {
-                      setState(() {
-                        _securityText = !_securityText;
-                      });
-                    },
-                  ),
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey)),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey)),
-                  labelText: "Confirm Password",
-                ),
-                obscureText: _securityText,
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 40),
-                child: Container(
-                  padding:
-                      EdgeInsets.only(bottom: 5, right: 5, left: 5, top: 3),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      border: Border(
-                        bottom: BorderSide(color: Colors.black),
-                        left: BorderSide(color: Colors.black),
-                        right: BorderSide(color: Colors.black),
-                        top: BorderSide(color: Colors.black),
-                      )),
-                  child: MaterialButton(
-                    minWidth: double.infinity,
-                    height: 60,
-                    onPressed: () {
-                      final String email = emailController.text.trim();
-                      final String password = passwordController.text.trim();
-
-                      if (email.isEmpty) {
-                        print("Email is Empty");
-                      } else {
-                        if (password.isEmpty) {
-                          print("Password is Empty");
-                        } else {
-                          userSetup(
-                              emailController.text, passwordController.text);
-                          context
-                              .read<AuthService>()
-                              .signUp(
-                                email,
-                                password,
-                              )
-                              .then((value) async {
-                            User? user = FirebaseAuth.instance.currentUser;
-
-                            await FirebaseFirestore.instance
-                                .collection("uid")
-                                .doc(user!.uid)
-                                .set({
-                              'uid': user.uid,
-                              'email': emailController,
-                              'password': passwordController,
-                            });
-                          });
-                        }
-                      }
-                    },
-                    color: Colors.pinkAccent,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50)),
-                    child: Text(
-                      "Sign In",
-                      style:
-                          TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              RichText(
-                text: TextSpan(
-                    text: "Already have an account?",
-                    style: TextStyle(
-                      color: Colors.grey,
-                    ),
-                    children: [
-                      TextSpan(
-                        text: "Signin",
-                        style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () async {
-                            await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => LoginPage()));
-                          },
-                      ),
-                    ]),
-              ),
-            ],
-          ),
-        ));
+      ),
+    );
   }
 
-  Future<void> userSetup(
-    String email,
-    String password,
-  ) async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    String uid = auth.currentUser!.uid.toString();
-    var firebaseUser = FirebaseAuth.instance.currentUser;
-    CollectionReference user = FirebaseFirestore.instance
-        .collection("uid")
-        .doc(firebaseUser?.uid)
-        .set({
-      "UserEmail": email,
-      "UserPassword": password,
-      "uid": uid,
-    }) as CollectionReference<Object?>;
+  void signUp(String email, String password) async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        await _auth
+            .createUserWithEmailAndPassword(email: email, password: password)
+            .then((value) => {postDetailsToFirestore()})
+            .catchError((e) {
+          Fluttertoast.showToast(msg: e!.message);
+        });
+      } on FirebaseAuthException catch (error) {
+        switch (error.code) {
+          case "invalid-email":
+            errorMessage = "Your email address appears to be malformed.";
+            break;
+          case "wrong-password":
+            errorMessage = "Your password is wrong.";
+            break;
+          case "user-not-found":
+            errorMessage = "User with this email doesn't exist.";
+            break;
+          case "user-disabled":
+            errorMessage = "User with this email has been disabled.";
+            break;
+          case "too-many-requests":
+            errorMessage = "Too many requests";
+            break;
+          case "operation-not-allowed":
+            errorMessage = "Signing in with Email and Password is not enabled.";
+            break;
+          default:
+            errorMessage = "An undefined Error happened.";
+        }
+        Fluttertoast.showToast(msg: errorMessage!);
+        print(error.code);
+      }
+    }
+  }
 
-    return;
+  postDetailsToFirestore() async {
+    // calling our firestore
+    // calling our user model
+    // sedning these values
+
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    User? user = _auth.currentUser;
+
+    UserModel userModel = UserModel();
+
+    // writing all the values
+    userModel.email = user!.email;
+    userModel.uid = user.uid;
+    userModel.firstName = firstNameEditingController.text;
+    userModel.lastName = lastNameEditingController.text;
+    userModel.phone = numEditingController.text;
+
+    await firebaseFirestore
+        .collection("users")
+        .doc(user.uid)
+        .set(userModel.toMap());
+    Fluttertoast.showToast(msg: "Account created successfully :) ");
+
+    Navigator.pushAndRemoveUntil(
+        (context),
+        MaterialPageRoute(builder: (context) => WelcomePage()),
+        (route) => false);
   }
 }
