@@ -21,6 +21,8 @@ class _LoginPageState extends State<LoginPage> {
 
   bool _secureText = true;
 
+  bool _isLoading = false;
+
   // editing controller
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -115,15 +117,26 @@ class _LoginPageState extends State<LoginPage> {
           onPressed: () {
             signIn(emailController.text, passwordController.text);
           },
-          child: Text(
-            "Login",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+          child: Container(
+            child: _isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                    ),
+                  )
+                : const Text(
+                    "Login",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),
+                  ),
           )),
     );
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -216,6 +229,9 @@ class _LoginPageState extends State<LoginPage> {
 
   // login function
   void signIn(String email, String password) async {
+    setState(() {
+      _isLoading = true;
+    });
     if (_formKey.currentState!.validate()) {
       try {
         await _auth

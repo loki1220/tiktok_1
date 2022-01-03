@@ -1,12 +1,13 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:tiktok/user_models.dart';
-import 'package:tiktok/welcome_page.dart';
-
 import 'login.dart';
 
 class SignupPage extends StatefulWidget {
@@ -25,6 +26,9 @@ class _SignupPageState extends State<SignupPage> {
   bool _secureText = true;
   bool _securityText = true;
 
+  //image picker
+  //PickedFile? _imageFile;
+
   // our form key
   final _formKey = GlobalKey<FormState>();
   // editing Controller
@@ -34,6 +38,110 @@ class _SignupPageState extends State<SignupPage> {
   final emailEditingController = TextEditingController();
   final passwordEditingController = TextEditingController();
   final confirmPasswordEditingController = TextEditingController();
+
+  String imageUrl = '';
+
+  final ImagePicker _picker = ImagePicker();
+
+  show() {
+    _imageFile == null ? AssetImage("assets/profile.png") : _imageFile!.path;
+  }
+
+  Widget importProfile() {
+    return Center(
+      child: Stack(
+        children: <Widget>[
+          CircleAvatar(radius: 60.0, backgroundImage: show()),
+          Positioned(
+            bottom: 0,
+            right: 10.0,
+            child: InkWell(
+              onTap: () {
+                showModalBottomSheet(
+                  context: context,
+                  builder: ((builder) => bottomSheet()),
+                );
+              },
+              child: Container(
+                height: 35,
+                width: 35.0,
+                decoration: (BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.teal,
+                )),
+                child: Icon(
+                  Icons.camera_alt,
+                  color: Colors.black,
+                  size: 18.0,
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  void takePhoto(ImageSource source) async {
+    final pickedFile = await _picker.pickImage(
+      source: source,
+    );
+    setState(() {
+      _imageFile = pickedFile as PickedFile?;
+    });
+  }
+
+  Widget bottomSheet() {
+    return Container(
+      height: 100.0,
+      width: MediaQuery.of(context).size.width,
+      margin: EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 20,
+      ),
+      child: Column(
+        children: <Widget>[
+          Text(
+            "Choose Photo from Gallery",
+            style: TextStyle(
+              fontSize: 20.0,
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              FlatButton.icon(
+                icon: Icon(Icons.camera),
+                onPressed: () {
+                  takePhoto(ImageSource.camera);
+                },
+                label: Text("Camera"),
+              ),
+              FlatButton.icon(
+                icon: Icon(Icons.image),
+                onPressed: () {
+                  takePhoto(ImageSource.gallery);
+                },
+                label: Text("Gallery"),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 80),
+                child: IconButton(
+                  icon: Icon(Icons.delete_forever),
+                  onPressed: () {
+                    print('removed');
+                  },
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -289,7 +397,19 @@ class _SignupPageState extends State<SignupPage> {
                           style:
                               TextStyle(fontSize: 20, color: Colors.grey[700]),
                         ),
+                        SizedBox(
+                          height: 30,
+                        ),
                       ],
+                    ),
+                    UserImage(onFileChanged: (imageUrl) {
+                      setState(() {
+                        this.imageUrl = imageUrl;
+                      });
+                    }),
+                    importProfile(),
+                    SizedBox(
+                      height: 15,
                     ),
                     SizedBox(height: 45),
                     firstNameField,
@@ -380,7 +500,7 @@ class _SignupPageState extends State<SignupPage> {
   postDetailsToFirestore() async {
     // calling our firestore
     // calling our user model
-    // sedning these values
+    // sending these values
 
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = _auth.currentUser;
@@ -393,16 +513,13 @@ class _SignupPageState extends State<SignupPage> {
     userModel.firstName = firstNameEditingController.text;
     userModel.lastName = lastNameEditingController.text;
     userModel.phone = numEditingController.text;
-
     await firebaseFirestore
         .collection("users")
         .doc(user.uid)
         .set(userModel.toMap());
     Fluttertoast.showToast(msg: "Account created successfully :) ");
 
-    Navigator.pushAndRemoveUntil(
-        (context),
-        MaterialPageRoute(builder: (context) => WelcomePage()),
-        (route) => false);
+    Navigator.pushAndRemoveUntil((context),
+        MaterialPageRoute(builder: (context) => LoginPage()), (route) => false);
   }
 }

@@ -4,6 +4,7 @@ class UserModel {
   String? firstName;
   String? lastName;
   String? phone;
+  String? Uint8List;
 
   UserModel({this.uid, this.email, this.firstName, this.lastName, this.phone});
 

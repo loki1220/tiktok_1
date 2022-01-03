@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:tiktok/home.dart';
+import 'package:tiktok/add_image.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({Key? key}) : super(key: key);
@@ -16,81 +17,162 @@ class _WelcomePageState extends State<WelcomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: Colors.black,
-            size: 20,
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.black38,
+        appBar: AppBar(
+          backgroundColor: Colors.black87,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios,
+              color: Color(0xffE6F7FF),
+              size: 20,
+            ),
+            onPressed: () {
+              // passing this to our root
+              Navigator.of(context).pop();
+            },
           ),
-          onPressed: () {
-            // passing this to our root
-            Navigator.of(context).pop();
-          },
+          title: Text(
+            "App Name",
+            style: TextStyle(color: Color(0xffE6F7FF)),
+          ),
+          actions: [
+            CircleAvatar(
+              child: Icon(Icons.account_circle_sharp),
+            )
+          ],
+          //centerTitle: true,
         ),
-        centerTitle: true,
-      ),
-      body: Stack(
-        children: <Widget>[
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Container(
-                      //margin: EdgeInsets.only(left: 30, top: 200),
-                      padding: EdgeInsets.all(10),
-                      child: FutureBuilder(
-                        future: _fetch(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState != ConnectionState.done)
-                            return Text(
-                              "Loading data...Please wait",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w900,
-                                  color: Colors.pinkAccent),
-                            );
-                          return Text(
-                            "$myfirstName" + " $mylastName",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w900,
-                                color: Colors.pinkAccent),
-                          );
-                        },
-                      )),
-                ],
-              )
+        bottomNavigationBar: BottomAppBar(
+          color: Colors.black,
+          shape: CircularNotchedRectangle(),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.home_outlined,
+                  color: Colors.grey,
+                ),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.search_outlined,
+                  color: Colors.grey,
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => AddImage()));
+                },
+                icon: Icon(
+                  Icons.add_box_outlined,
+                  color: Colors.grey,
+                ),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.notifications_none_outlined,
+                  color: Colors.grey,
+                ),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.settings_outlined,
+                  color: Colors.grey,
+                ),
+              ),
             ],
           ),
-          Column(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-            MaterialButton(
-              minWidth: double.infinity,
-              height: 60,
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => HomePage()));
-              },
-              color: Colors.pinkAccent,
-              shape: RoundedRectangleBorder(
-                  side: BorderSide(color: Colors.black),
-                  borderRadius: BorderRadius.circular(50)),
-              child: Text(
-                "Logout",
-                style: TextStyle(
-                    fontWeight: FontWeight.w900,
-                    fontSize: 20,
-                    color: Colors.white),
-              ),
+        ),
+        body: Stack(
+          children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                          //margin: EdgeInsets.only(left: 30, top: 200),
+                          padding: EdgeInsets.all(10),
+                          child: FutureBuilder(
+                            future: _fetch(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState !=
+                                  ConnectionState.done) {
+                                return Text(
+                                  "Loading data...Please wait",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w900,
+                                      color: Color(0xffE6F7FF)),
+                                );
+                              }
+                              return Text(
+                                "$myfirstName" + " $mylastName",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    color: Color(0xffE6F7FF)),
+                              );
+                            },
+                          )),
+                    ]),
+                Container(
+                  height: 565,
+                  width: MediaQuery.of(context).size.width,
+                  child: StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('imageURLs')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      return !snapshot.hasData
+                          ? Center(
+                              child: CircularProgressIndicator(),
+                            )
+                          : Container(
+                              height: 50,
+                              width: 50,
+                              padding: EdgeInsets.all(4),
+                              child: GridView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: (snapshot.data! as QuerySnapshot)
+                                      .docs
+                                      .length,
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 1),
+                                  itemBuilder: (context, index) {
+                                    return Container(
+                                      height: 50,
+                                      width: 50,
+                                      margin: EdgeInsets.all(1),
+                                      child: FadeInImage.memoryNetwork(
+                                          fit: BoxFit.cover,
+                                          placeholder: kTransparentImage,
+                                          image:
+                                              (snapshot.data! as QuerySnapshot)
+                                                  .docs[index]
+                                                  .get('url')),
+                                    );
+                                  }),
+                            );
+                    },
+                  ),
+                )
+              ],
             ),
-          ]),
-          SizedBox(
-            height: 30,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

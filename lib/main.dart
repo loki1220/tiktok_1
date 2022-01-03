@@ -32,13 +32,13 @@ class InitializerWidget extends StatefulWidget {
 
 class _InitializerWidgetState extends State<InitializerWidget> {
   FirebaseAuth? _auth;
-  User? user;
+  User? users;
   bool isLoading = true;
   @override
   void initState() {
     super.initState();
     _auth = FirebaseAuth.instance;
-    user = _auth!.currentUser;
+    users = _auth!.currentUser;
     isLoading = false;
   }
 
@@ -50,8 +50,17 @@ class _InitializerWidgetState extends State<InitializerWidget> {
               child: CircularProgressIndicator(),
             ),
           )
-        : user == null
+        : users == null
             ? HomePage()
             : WelcomePage();
   }
+}
+
+// for displaying snackbars
+showSnackBar(BuildContext context, String text) {
+  return ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(text),
+    ),
+  );
 }
