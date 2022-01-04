@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tiktok/user_models.dart';
+
 import 'login.dart';
 
 class SignupPage extends StatefulWidget {

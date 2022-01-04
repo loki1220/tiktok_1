@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:tiktok/forgot_password.dart';
+import 'package:tiktok/screens/forgot_password.dart';
 import 'package:tiktok/mobile_screen_layout.dart';
 import 'package:tiktok/screens/signup.dart';
 import 'package:flutter/gestures.dart';
