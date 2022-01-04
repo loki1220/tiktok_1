@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -27,7 +25,7 @@ class _SignupPageState extends State<SignupPage> {
   bool _securityText = true;
 
   //image picker
-  //PickedFile? _imageFile;
+  PickedFile? _imageFile;
 
   // our form key
   final _formKey = GlobalKey<FormState>();
@@ -43,15 +41,16 @@ class _SignupPageState extends State<SignupPage> {
 
   final ImagePicker _picker = ImagePicker();
 
-  show() {
+  /* show() {
     _imageFile == null ? AssetImage("assets/profile.png") : _imageFile!.path;
-  }
+  }*/
 
   Widget importProfile() {
     return Center(
       child: Stack(
         children: <Widget>[
-          CircleAvatar(radius: 60.0, backgroundImage: show()),
+          CircleAvatar(
+              radius: 60.0, backgroundImage: AssetImage("assets/profile.png")),
           Positioned(
             bottom: 0,
             right: 10.0,
@@ -67,7 +66,7 @@ class _SignupPageState extends State<SignupPage> {
                 width: 35.0,
                 decoration: (BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.teal,
+                  color: Colors.blueGrey,
                 )),
                 child: Icon(
                   Icons.camera_alt,
@@ -402,11 +401,11 @@ class _SignupPageState extends State<SignupPage> {
                         ),
                       ],
                     ),
-                    UserImage(onFileChanged: (imageUrl) {
+                    /*UserImage(onFileChanged: (imageUrl) {
                       setState(() {
                         this.imageUrl = imageUrl;
                       });
-                    }),
+                    }),*/
                     importProfile(),
                     SizedBox(
                       height: 15,
