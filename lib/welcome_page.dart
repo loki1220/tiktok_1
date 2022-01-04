@@ -112,7 +112,7 @@ class _WelcomePageState extends State<WelcomePage> {
                               if (snapshot.connectionState !=
                                   ConnectionState.done) {
                                 return Text(
-                                  "Loading data...Please wait",
+                                  "Loading data......Please wait",
                                   style: TextStyle(
                                       fontWeight: FontWeight.w900,
                                       color: Color(0xffE6F7FF)),
