@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tiktok/login.dart';
-import 'package:tiktok/signup.dart';
+import 'package:tiktok/screens/login.dart';
+import 'package:tiktok/screens/signup.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);

@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tiktok/forgot_password.dart';
-import 'package:tiktok/signup.dart';
+import 'package:tiktok/mobile_screen_layout.dart';
+import 'package:tiktok/screens/signup.dart';
 import 'package:flutter/gestures.dart';
-import 'package:tiktok/welcome_page.dart';
+//import 'package:tiktok/welcome_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -136,7 +137,7 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -238,8 +239,8 @@ class _LoginPageState extends State<LoginPage> {
             .signInWithEmailAndPassword(email: email, password: password)
             .then((uid) => {
                   Fluttertoast.showToast(msg: "Login Successful"),
-                  Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => WelcomePage())),
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => MobileScreenLayout())),
                 });
       } on FirebaseAuthException catch (error) {
         switch (error.code) {

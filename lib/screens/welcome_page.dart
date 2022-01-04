@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:tiktok/add_image.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class WelcomePage extends StatefulWidget {
@@ -12,6 +11,7 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
+
   var myfirstName;
   var mylastName;
 
@@ -48,7 +48,7 @@ class _WelcomePageState extends State<WelcomePage> {
           ],
           //centerTitle: true,
         ),
-        bottomNavigationBar: BottomAppBar(
+        /*bottomNavigationBar: BottomAppBar(
           color: Colors.black,
           shape: CircularNotchedRectangle(),
           child: Row(
@@ -57,15 +57,15 @@ class _WelcomePageState extends State<WelcomePage> {
               IconButton(
                 onPressed: () {},
                 icon: Icon(
-                  Icons.home_outlined,
-                  color: Colors.grey,
+                  Icons.home,
+                  color: _page == 0 ? Colors.white : Colors.grey,
                 ),
               ),
               IconButton(
                 onPressed: () {},
                 icon: Icon(
-                  Icons.search_outlined,
-                  color: Colors.grey,
+                  Icons.search,
+                  color: _page == 1 ? Colors.white : Colors.grey,
                 ),
               ),
               IconButton(
@@ -74,27 +74,27 @@ class _WelcomePageState extends State<WelcomePage> {
                       MaterialPageRoute(builder: (context) => AddImage()));
                 },
                 icon: Icon(
-                  Icons.add_box_outlined,
-                  color: Colors.grey,
+                  Icons.add_box,
+                  color: _page == 2 ? Colors.white : Colors.grey,
                 ),
               ),
               IconButton(
                 onPressed: () {},
                 icon: Icon(
-                  Icons.notifications_none_outlined,
-                  color: Colors.grey,
+                  Icons.favorite,
+                  color: _page == 3 ? Colors.white : Colors.grey,
                 ),
               ),
               IconButton(
                 onPressed: () {},
                 icon: Icon(
-                  Icons.settings_outlined,
-                  color: Colors.grey,
+                  Icons.person,
+                  color: _page == 4 ? Colors.white : Colors.grey,
                 ),
               ),
             ],
           ),
-        ),
+        ),*/
         body: Stack(
           children: <Widget>[
             Column(
@@ -112,7 +112,7 @@ class _WelcomePageState extends State<WelcomePage> {
                               if (snapshot.connectionState !=
                                   ConnectionState.done) {
                                 return Text(
-                                  "Loading data......Please wait",
+                                  "Loading data...Please wait",
                                   style: TextStyle(
                                       fontWeight: FontWeight.w900,
                                       color: Color(0xffE6F7FF)),

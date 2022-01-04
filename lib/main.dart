@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tiktok/home.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:tiktok/welcome_page.dart';
+import 'package:tiktok/screens/welcome_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
