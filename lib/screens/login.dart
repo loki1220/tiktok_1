@@ -111,7 +111,7 @@ class _LoginPageState extends State<LoginPage> {
     final loginButton = Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
-      color: Colors.black87,
+      color: Colors.grey,
       child: MaterialButton(
           padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
           minWidth: MediaQuery.of(context).size.width,
@@ -122,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
             child: _isLoading
                 ? const Center(
                     child: CircularProgressIndicator(
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                   )
                 : const Text(
@@ -130,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontSize: 20,
-                        color: Colors.white,
+                        color: Colors.black,
                         fontWeight: FontWeight.bold),
                   ),
           )),
@@ -138,14 +138,14 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios,
-            color: Colors.black,
+            color: Colors.white,
             size: 20,
           ),
           onPressed: () {
@@ -157,7 +157,7 @@ class _LoginPageState extends State<LoginPage> {
       body: Center(
         child: SingleChildScrollView(
           child: Container(
-            color: Colors.white,
+            //color: Colors.white,
             child: Padding(
               padding: const EdgeInsets.all(36.0),
               child: Form(

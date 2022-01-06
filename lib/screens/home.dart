@@ -13,6 +13,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      //backgroundColor: Colors.white,
       body: SafeArea(
         child: Container(
           width: double.infinity,
@@ -45,16 +46,16 @@ class _HomePageState extends State<HomePage> {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) => LoginPage()));
                     },
-                    color: Colors.black87,
+                    color: Colors.grey,
                     shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.black),
+                        side: BorderSide(color: Colors.lightBlueAccent),
                         borderRadius: BorderRadius.circular(50)),
                     child: Text(
                       "Sign In",
                       style: TextStyle(
                           fontWeight: FontWeight.w900,
                           fontSize: 18,
-                          color: Colors.white),
+                          color: Colors.black),
                     ),
                   ),
                   SizedBox(
@@ -82,6 +83,7 @@ class _HomePageState extends State<HomePage> {
                       },
                       color: Colors.pinkAccent,
                       shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Colors.white),
                           borderRadius: BorderRadius.circular(50)),
                       child: Text(
                         "Sign Up",

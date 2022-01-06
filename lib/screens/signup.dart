@@ -335,7 +335,9 @@ class _SignupPageState extends State<SignupPage> {
 
     //signup button
     final signUpButton = Material(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+      shape: RoundedRectangleBorder(
+          side: BorderSide(color: Colors.white),
+          borderRadius: BorderRadius.circular(50)),
       color: Colors.pinkAccent,
       child: MaterialButton(
           padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
@@ -349,19 +351,19 @@ class _SignupPageState extends State<SignupPage> {
             "Sign Up",
             textAlign: TextAlign.center,
             style: TextStyle(
-                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+                fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
           )),
     );
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      //backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios,
-            color: Colors.black,
+            color: Colors.white,
             size: 20,
           ),
           onPressed: () {
@@ -373,7 +375,6 @@ class _SignupPageState extends State<SignupPage> {
       body: Center(
         child: SingleChildScrollView(
           child: Container(
-            color: Colors.white,
             child: Padding(
               padding: const EdgeInsets.all(36.0),
               child: Form(
@@ -387,7 +388,9 @@ class _SignupPageState extends State<SignupPage> {
                         Text(
                           "Sign Up",
                           style: TextStyle(
-                              fontSize: 30, fontWeight: FontWeight.bold),
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         SizedBox(
                           height: 20,
