@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -5,8 +7,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:tiktok/user_models.dart';
+import 'package:tiktok/mobile_screen_layout.dart';
+import 'package:tiktok/utils/utils.dart';
 
+import '../resources/auth_metrhods.dart';
+import '../models/user.dart';
 import 'login.dart';
 
 class SignupPage extends StatefulWidget {
@@ -39,6 +44,8 @@ class _SignupPageState extends State<SignupPage> {
   final confirmPasswordEditingController = TextEditingController();
 
   String imageUrl = '';
+  bool _isLoading = false;
+  Uint8List? _image;
 
   final ImagePicker _picker = ImagePicker();
 
@@ -141,6 +148,14 @@ class _SignupPageState extends State<SignupPage> {
         ],
       ),
     );
+  }
+
+  selectImage() async {
+    Uint8List im = await pickImage(ImageSource.gallery);
+    // set state because we need to display the image we selected on the circle avatar
+    setState(() {
+      _image = im;
+    });
   }
 
   @override
@@ -462,6 +477,36 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
+  void signUpUser() async {
+    // set loading to true
+    setState(() {
+      _isLoading = true;
+    });
+
+    String res = await AuthMethods().signUpUser(
+        email: emailEditingController.text,
+        password: passwordEditingController.text,
+        firstName: firstNameEditingController.text,
+        lastName: lastNameEditingController.text,
+        phone: numEditingController.text,
+        file: _image!);
+
+    if (res == "success") {
+      setState(() {
+        _isLoading = false;
+      });
+      // navigate to the home screen
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => LoginPage()));
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
+      // show the error
+      showSnackBar(context, res);
+    }
+  }
+
   void signUp(String email, String password) async {
     if (_formKey.currentState!.validate()) {
       try {
@@ -505,22 +550,19 @@ class _SignupPageState extends State<SignupPage> {
     // calling our user model
     // sending these values
 
-    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    FirebaseFirestore _firebase = FirebaseFirestore.instance;
     User? user = _auth.currentUser;
 
-    UserModel userModel = UserModel();
+    // UserModel userModel = UserModel();
 
-    // writing all the values
-    userModel.email = user!.email;
+    /*// writing all the values
+    userModel.email = user!.email!;
     userModel.uid = user.uid;
     userModel.firstName = firstNameEditingController.text;
     userModel.lastName = lastNameEditingController.text;
     userModel.phone = numEditingController.text;
-    await firebaseFirestore
-        .collection("users")
-        .doc(user.uid)
-        .set(userModel.toMap());
-    Fluttertoast.showToast(msg: "Account created successfully :) ");
+    await _firebase.collection("users").doc(user.uid).set(userModel.toJson());
+    Fluttertoast.showToast(msg: "Account created successfully :) ");*/
 
     Navigator.pushAndRemoveUntil((context),
         MaterialPageRoute(builder: (context) => LoginPage()), (route) => false);
