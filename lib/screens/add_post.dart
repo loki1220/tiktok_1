@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -22,49 +21,47 @@ class _AddPostScreenState extends State<AddPostScreen> {
   bool isLoading = false;
   final TextEditingController _descriptionController = TextEditingController();
 
-
-  _selectImage(BuildContext context) async {
+  _selectImage(BuildContext parentContext) async {
     return showDialog(
-        context: context,
-        builder: (context) {
-          return SimpleDialog(
-            title: Text("Create Post"),
-            children: [
-              SimpleDialogOption(
+      context: parentContext,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          title: Text("Create Post"),
+          children: <Widget>[
+            SimpleDialogOption(
+              padding: EdgeInsets.all(20),
+              child: Text("Take a photo"),
+              onPressed: () async {
+                Navigator.pop(context);
+                Uint8List file = await pickImage(ImageSource.camera);
+                setState(() {
+                  _file = file;
+                });
+              },
+            ),
+            SimpleDialogOption(
                 padding: EdgeInsets.all(20),
-                child: Text("Take a photo"),
+                child: Text("Choose from Gallery"),
                 onPressed: () async {
                   Navigator.of(context).pop();
                   Uint8List file = await pickImage(
-                    ImageSource.camera,
+                    ImageSource.gallery,
                   );
                   setState(() {
                     _file = file;
                   });
-                },
-              ),
-              SimpleDialogOption(
-                  padding: EdgeInsets.all(20),
-                  child: Text("Choose from Gallery"),
-                  onPressed: () async {
-                    Navigator.of(context).pop();
-                    Uint8List file = await pickImage(
-                      ImageSource.gallery,
-                    );
-                    setState(() {
-                      _file = file;
-                    });
-                  }),
-              SimpleDialogOption(
-                padding: const EdgeInsets.all(20),
-                child: const Text("Cancel"),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              )
-            ],
-          );
-        });
+                }),
+            SimpleDialogOption(
+              padding: const EdgeInsets.all(20),
+              child: const Text("Cancel"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            )
+          ],
+        );
+      },
+    );
   }
 
   void postImage(String uid, String firstName, String profImage) async {
@@ -123,7 +120,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
     return _file == null
         ? Center(
             child: IconButton(
-              icon: const Icon(Icons.upload),
+              icon: const Icon(
+                Icons.upload,
+              ),
               onPressed: () => _selectImage(context),
             ),
           )
@@ -135,8 +134,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 onPressed: clearImage,
               ),
               title: Text("Post to"),
-              actions: [
-                TextButton(
+              actions: <Widget>[
+                /* TextButton(
                   onPressed: () => postImage(
                     userProvider.getUser.uid,
                     userProvider.getUser.firstName,
@@ -145,12 +144,11 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   child: Text(
                     "Post",
                     style: TextStyle(
-                      color: Colors.blueAccent,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+                        color: Colors.blueAccent,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16.0),
                   ),
-                )
+                )*/
               ],
             ),
             body: Column(
@@ -166,19 +164,20 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     CircleAvatar(
                       backgroundImage: NetworkImage(
                         userProvider.getUser.photoUrl,
-                      ),
+                      ), /* AssetImage('assets/tiktok.png')*/
                     ),
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.45,
                       child: TextField(
+                        controller: _descriptionController,
                         decoration: InputDecoration(
-                          hintText: 'Writen a Caption...',
+                          hintText: "Write a caption...",
                           border: InputBorder.none,
                         ),
                         maxLines: 5,
                       ),
                     ),
-                    SizedBox(
+                    /*SizedBox(
                       height: 45,
                       width: 45,
                       child: AspectRatio(
@@ -186,14 +185,14 @@ class _AddPostScreenState extends State<AddPostScreen> {
                         child: Container(
                           decoration: BoxDecoration(
                               image: DecorationImage(
-                            image: AssetImage("assets/loki.JPG"),
                             fit: BoxFit.fill,
                             alignment: FractionalOffset.topCenter,
+                            image: MemoryImage(_file!),
                           )),
                         ),
                       ),
-                    ),
-                    Divider(),
+                    ),*/
+                    const Divider(),
                   ],
                 )
               ],
