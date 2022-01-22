@@ -1,17 +1,12 @@
 import 'dart:typed_data';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:tiktok/mobile_screen_layout.dart';
+import 'package:tiktok/resources/auth_methods.dart';
 import 'package:tiktok/utils/utils.dart';
 
-import '../resources/auth_metrhods.dart';
-import '../models/user.dart';
 import 'login.dart';
 
 class SignupPage extends StatefulWidget {
@@ -22,8 +17,6 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
-  final _auth = FirebaseAuth.instance;
-
   // string for displaying the error Message
   String? errorMessage;
 
@@ -31,28 +24,67 @@ class _SignupPageState extends State<SignupPage> {
   bool _securityText = true;
 
   //image picker
-  PickedFile? _imageFile;
 
   // our form key
   final _formKey = GlobalKey<FormState>();
   // editing Controller
-  final firstNameEditingController = TextEditingController();
-  final lastNameEditingController = TextEditingController();
+  final fullNameEditingController = TextEditingController();
+  final userNameEditingController = TextEditingController();
   final numEditingController = TextEditingController();
   final emailEditingController = TextEditingController();
   final passwordEditingController = TextEditingController();
   final confirmPasswordEditingController = TextEditingController();
 
-  String imageUrl = '';
   bool _isLoading = false;
   Uint8List? _image;
 
-  final ImagePicker _picker = ImagePicker();
+  @override
+  void dispose() {
+    super.dispose();
+    emailEditingController.dispose();
+    passwordEditingController.dispose();
+    fullNameEditingController.dispose();
+  }
 
-  /* show() {
-    _imageFile == null ? AssetImage("assets/profile.png") : _imageFile!.path;
-  }*/
+  void signUpUser() async {
+    // set loading to true
+    setState(() {
+      _isLoading = true;
+    });
 
+    String res = await AuthMethods().signUpUser(
+        email: emailEditingController.text,
+        password: passwordEditingController.text,
+        fullname: fullNameEditingController.text,
+        username: userNameEditingController.text,
+        phone: numEditingController.text,
+        file: _image);
+
+    if (res == "success") {
+      setState(() {
+        _isLoading = false;
+      });
+      // navigate to the home screen
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => LoginPage()));
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
+      // show the error
+      showSnackBar(context, res);
+    }
+  }
+
+  selectImage() async {
+    Uint8List im = await pickImage(ImageSource.gallery);
+    // set state because we need to display the image we selected on the circle avatar
+    setState(() {
+      _image = im;
+    });
+  }
+
+/*
   Widget importProfile() {
     return Center(
       child: Stack(
@@ -149,26 +181,19 @@ class _SignupPageState extends State<SignupPage> {
       ),
     );
   }
-
-  selectImage() async {
-    Uint8List im = await pickImage(ImageSource.gallery);
-    // set state because we need to display the image we selected on the circle avatar
-    setState(() {
-      _image = im;
-    });
-  }
+*/
 
   @override
   Widget build(BuildContext context) {
     //first name field
     final firstNameField = TextFormField(
         autofocus: false,
-        controller: firstNameEditingController,
+        controller: fullNameEditingController,
         keyboardType: TextInputType.name,
         validator: (value) {
           RegExp regex = RegExp(r'^.{3,}$');
           if (value!.isEmpty) {
-            return ("First Name cannot be Empty");
+            return ("Full Name cannot be Empty");
           }
           if (!regex.hasMatch(value)) {
             return ("Enter Valid name(Min. 3 Character)");
@@ -176,7 +201,7 @@ class _SignupPageState extends State<SignupPage> {
           return null;
         },
         onSaved: (value) {
-          firstNameEditingController.text = value!;
+          fullNameEditingController.text = value!;
         },
         maxLength: 30,
         textInputAction: TextInputAction.next,
@@ -188,13 +213,13 @@ class _SignupPageState extends State<SignupPage> {
               OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           border:
               OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          labelText: "First Name",
+          labelText: "Full Name",
         ));
 
     //second name field
     final secondNameField = TextFormField(
         autofocus: false,
-        controller: lastNameEditingController,
+        controller: userNameEditingController,
         keyboardType: TextInputType.name,
         validator: (value) {
           if (value!.isEmpty) {
@@ -203,7 +228,7 @@ class _SignupPageState extends State<SignupPage> {
           return null;
         },
         onSaved: (value) {
-          lastNameEditingController.text = value!;
+          userNameEditingController.text = value!;
         },
         maxLength: 20,
         textInputAction: TextInputAction.next,
@@ -215,7 +240,7 @@ class _SignupPageState extends State<SignupPage> {
               OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           border:
               OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          labelText: "Last Name",
+          labelText: "User Name",
         ));
 
     //email field
@@ -235,7 +260,7 @@ class _SignupPageState extends State<SignupPage> {
           return null;
         },
         onSaved: (value) {
-          firstNameEditingController.text = value!;
+          fullNameEditingController.text = value!;
         },
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
@@ -264,7 +289,7 @@ class _SignupPageState extends State<SignupPage> {
           }
         },
         onSaved: (value) {
-          firstNameEditingController.text = value!;
+          fullNameEditingController.text = value!;
         },
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
@@ -293,7 +318,7 @@ class _SignupPageState extends State<SignupPage> {
           }
         },
         onSaved: (value) {
-          firstNameEditingController.text = value!;
+          fullNameEditingController.text = value!;
         },
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
@@ -360,13 +385,21 @@ class _SignupPageState extends State<SignupPage> {
           height: 60,
           elevation: 5,
           onPressed: () {
-            signUp(emailEditingController.text, passwordEditingController.text);
+            signUpUser();
           },
-          child: Text(
-            "Sign Up",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
+          child: Container(
+            child: !_isLoading
+                ? Text(
+                    "Sign Up",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold),
+                  )
+                : CircularProgressIndicator(
+                    color: Colors.black,
+                  ),
           )),
     );
 
@@ -387,7 +420,7 @@ class _SignupPageState extends State<SignupPage> {
           },
         ),
       ),
-      body: Center(
+      body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
             child: Padding(
@@ -418,6 +451,39 @@ class _SignupPageState extends State<SignupPage> {
                         SizedBox(
                           height: 30,
                         ),
+                        Stack(
+                          children: [
+                            _image != null
+                                ? CircleAvatar(
+                                    radius: 64,
+                                    backgroundImage: MemoryImage(_image!),
+                                    backgroundColor: Colors.red,
+                                  )
+                                : const CircleAvatar(
+                                    radius: 64,
+                                    backgroundImage: NetworkImage(
+                                        'https://i.stack.imgur.com/l60Hf.png'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                            Positioned(
+                              bottom: -0,
+                              left: 85,
+                              child: Container(
+                                height: 30,
+                                width: 30,
+                                decoration: (BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.blueGrey,
+                                )),
+                                child: IconButton(
+                                  onPressed: selectImage,
+                                  icon: const Icon(Icons.add_a_photo),
+                                  iconSize: 16,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
                       ],
                     ),
                     /*UserImage(onFileChanged: (imageUrl) {
@@ -425,10 +491,10 @@ class _SignupPageState extends State<SignupPage> {
                         this.imageUrl = imageUrl;
                       });
                     }),*/
-                    importProfile(),
+                    /* importProfile(),
                     SizedBox(
                       height: 15,
-                    ),
+                    ),*/
                     SizedBox(height: 45),
                     firstNameField,
                     SizedBox(height: 35),
@@ -477,36 +543,7 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
-  void signUpUser() async {
-    // set loading to true
-    setState(() {
-      _isLoading = true;
-    });
-
-    String res = await AuthMethods().signUpUser(
-        email: emailEditingController.text,
-        password: passwordEditingController.text,
-        firstName: firstNameEditingController.text,
-        lastName: lastNameEditingController.text,
-        phone: numEditingController.text,
-        file: _image!);
-
-    if (res == "success") {
-      setState(() {
-        _isLoading = false;
-      });
-      // navigate to the home screen
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => LoginPage()));
-    } else {
-      setState(() {
-        _isLoading = false;
-      });
-      // show the error
-      showSnackBar(context, res);
-    }
-  }
-
+/*
   void signUp(String email, String password) async {
     if (_formKey.currentState!.validate()) {
       try {
@@ -544,7 +581,9 @@ class _SignupPageState extends State<SignupPage> {
       }
     }
   }
+*/
 
+/*
   postDetailsToFirestore() async {
     // calling our firestore
     // calling our user model
@@ -553,18 +592,20 @@ class _SignupPageState extends State<SignupPage> {
     FirebaseFirestore _firebase = FirebaseFirestore.instance;
     User? user = _auth.currentUser;
 
-    // UserModel userModel = UserModel();
+    UserModel userModel = UserModel();
 
-    /*// writing all the values
-    userModel.email = user!.email!;
+    // writing all the values
+     userModel.email = user!.email!;
     userModel.uid = user.uid;
     userModel.firstName = firstNameEditingController.text;
     userModel.lastName = lastNameEditingController.text;
     userModel.phone = numEditingController.text;
-    await _firebase.collection("users").doc(user.uid).set(userModel.toJson());
-    Fluttertoast.showToast(msg: "Account created successfully :) ");*/
+    await _firebase.collection("users").doc(user.uid).set(userModel.toMap());
+    Fluttertoast.showToast(msg: "Account created successfully :) ");
 
-    Navigator.pushAndRemoveUntil((context),
+     Navigator.pushAndRemoveUntil((context),
         MaterialPageRoute(builder: (context) => LoginPage()), (route) => false);
   }
+*/
+
 }

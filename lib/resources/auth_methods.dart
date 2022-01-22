@@ -10,29 +10,29 @@ class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // get user details
-  Future<model.UserModel> getUserDetails() async {
+  Future<model.User> getUserDetails() async {
     User currentUser = _auth.currentUser!;
 
     DocumentSnapshot documentSnapshot =
         await _firestore.collection('users').doc(currentUser.uid).get();
 
-    return model.UserModel.fromSnap(documentSnapshot);
+    return model.User.fromSnap(documentSnapshot);
   }
 
   Future<String> signUpUser({
+    required String fullname,
+    required String username,
+    required String phone,
     required String email,
     required String password,
-    required String firstName,
-    required String lastName,
-    required String phone,
-    required Uint8List file,
+    required Uint8List? file,
   }) async {
     String res = "Some error Occurred";
     try {
-      if (email.isNotEmpty ||
+      if (fullname.isNotEmpty ||
+          username.isNotEmpty ||
+          email.isNotEmpty ||
           password.isNotEmpty ||
-          firstName.isNotEmpty ||
-          lastName.isNotEmpty ||
           phone.isNotEmpty ||
           file != null) {
         // registering user in auth with email and password
@@ -42,11 +42,11 @@ class AuthMethods {
         );
 
         String photoUrl = await StorageMethods()
-            .uploadImageToStorage('profilePics', file, false);
+            .uploadImageToStorage('profilePics', file!, false);
 
-        model.UserModel _user = model.UserModel(
-          firstName: firstName,
-          lastName: lastName,
+        model.User _user = model.User(
+          fullname: fullname,
+          username: username,
           uid: cred.user!.uid,
           photoUrl: photoUrl,
           email: email,

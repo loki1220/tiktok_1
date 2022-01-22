@@ -7,6 +7,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:tiktok/screens/welcome_page.dart';
 import 'package:tiktok/utils/colors.dart';
 
+import 'mobile_screen_layout.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();

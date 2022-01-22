@@ -1,18 +1,18 @@
 import 'package:provider/provider.dart';
 import 'package:tiktok/models/user.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:tiktok/resources/auth_metrhods.dart';
+import 'package:tiktok/resources/auth_methods.dart';
 import 'package:tiktok/utils/global_variables.dart';
 
 class UserProvider with ChangeNotifier {
-  UserModel? _user;
+  User? _user;
 
   final AuthMethods _authMethods = AuthMethods();
 
-  UserModel get getUser => _user!;
+  User? get getUser => _user;
 
   Future<void> refreshUser() async {
-    UserModel user = await _authMethods.getUserDetails();
+    User user = await _authMethods.getUserDetails();
     _user = user;
     notifyListeners();
   }

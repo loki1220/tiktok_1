@@ -32,7 +32,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
               padding: EdgeInsets.all(20),
               child: Text("Take a photo"),
               onPressed: () async {
-                Navigator.pop(context);
+                // Navigator.of(context).pop();
                 Uint8List file = await pickImage(ImageSource.camera);
                 setState(() {
                   _file = file;
@@ -64,7 +64,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
     );
   }
 
-  void postImage(String uid, String firstName, String profImage) async {
+  void postImage(String uid, String username, String profImage) async {
     setState(() {
       isLoading = true;
     });
@@ -75,7 +75,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
         _descriptionController.text,
         _file!,
         uid,
-        firstName,
+        username,
         profImage,
       );
       if (res == "success") {
@@ -135,11 +135,11 @@ class _AddPostScreenState extends State<AddPostScreen> {
               ),
               title: Text("Post to"),
               actions: <Widget>[
-                /* TextButton(
+                TextButton(
                   onPressed: () => postImage(
-                    userProvider.getUser.uid,
-                    userProvider.getUser.firstName,
-                    userProvider.getUser.photoUrl,
+                    userProvider.getUser!.uid,
+                    userProvider.getUser!.username,
+                    userProvider.getUser!.photoUrl,
                   ),
                   child: Text(
                     "Post",
@@ -148,7 +148,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                         fontWeight: FontWeight.bold,
                         fontSize: 16.0),
                   ),
-                )*/
+                )
               ],
             ),
             body: Column(
@@ -162,24 +162,24 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     CircleAvatar(
-                      backgroundImage: NetworkImage(
+                        backgroundImage: AssetImage('assets/tiktok.png')
+                        /* NetworkImage(
                         userProvider.getUser.photoUrl,
-                      ), /* AssetImage('assets/tiktok.png')*/
-                    ),
+                      ),*/
+                        ),
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.45,
                       child: TextField(
                         controller: _descriptionController,
-                        decoration: InputDecoration(
-                          hintText: "Write a caption...",
-                          border: InputBorder.none,
-                        ),
+                        decoration: const InputDecoration(
+                            hintText: "Write a caption...",
+                            border: InputBorder.none),
                         maxLines: 5,
                       ),
                     ),
-                    /*SizedBox(
-                      height: 45,
-                      width: 45,
+                    SizedBox(
+                      height: 45.0,
+                      width: 45.0,
                       child: AspectRatio(
                         aspectRatio: 487 / 451,
                         child: Container(
@@ -191,10 +191,10 @@ class _AddPostScreenState extends State<AddPostScreen> {
                           )),
                         ),
                       ),
-                    ),*/
-                    const Divider(),
+                    ),
                   ],
-                )
+                ),
+                const Divider(),
               ],
             ),
           );

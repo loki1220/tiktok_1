@@ -7,7 +7,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tiktok/screens/login.dart';
 import 'package:tiktok/screens/signup.dart';
 
-
 class ForgotPass extends StatefulWidget {
   const ForgotPass({Key? key}) : super(key: key);
 
@@ -65,7 +64,7 @@ class _ForgotPassState extends State<ForgotPass> {
     final loginButton = Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
-      color: Colors.black87,
+      color: Colors.white54,
       child: MaterialButton(
           padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
           minWidth: MediaQuery.of(context).size.width,
@@ -78,19 +77,19 @@ class _ForgotPassState extends State<ForgotPass> {
             "Verify",
             textAlign: TextAlign.center,
             style: TextStyle(
-                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+                fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
           )),
     );
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      //backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios,
-            color: Colors.black,
+            color: Colors.grey,
             size: 20,
           ),
           onPressed: () {
@@ -102,7 +101,7 @@ class _ForgotPassState extends State<ForgotPass> {
       body: Center(
         child: SingleChildScrollView(
           child: Container(
-            color: Colors.white,
+            //color: Colors.white,
             child: Padding(
               padding: const EdgeInsets.all(36.0),
               child: Form(
