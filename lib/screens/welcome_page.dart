@@ -11,9 +11,8 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-
-  var myfirstName;
-  var mylastName;
+  var myfullname;
+  var myusername;
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +118,7 @@ class _WelcomePageState extends State<WelcomePage> {
                                 );
                               }
                               return Text(
-                                "$myfirstName" + " $mylastName",
+                                "$myfullname" + " $myusername",
                                 style: TextStyle(
                                     fontWeight: FontWeight.w900,
                                     color: Color(0xffE6F7FF)),
@@ -185,8 +184,8 @@ class _WelcomePageState extends State<WelcomePage> {
           .doc(firebaseUser.uid)
           .get()
           .then((ds) async {
-        myfirstName = ds.data()!["firstName"];
-        mylastName = ds.data()!["lastName"];
+        myfullname = ds.data()!["fullname"];
+        myusername = ds.data()!["username"];
       }).catchError((e) {
         print(e);
       });

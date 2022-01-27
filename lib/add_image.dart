@@ -26,7 +26,6 @@ class _AddImageState extends State<AddImage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.black,
         appBar: AppBar(
           backgroundColor: Colors.black87,
           elevation: 0,

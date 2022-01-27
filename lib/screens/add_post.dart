@@ -1,3 +1,4 @@
+import 'dart:html';
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
@@ -17,7 +18,21 @@ class AddPostScreen extends StatefulWidget {
 }
 
 class _AddPostScreenState extends State<AddPostScreen> {
-  Uint8List? _file;
+
+  late File file;
+
+
+  handleTakePhoto() async{
+    Navigator.pop(context);
+    File file = await ImagePicker.pickImage(source: ImageSource.camera,
+    maxHeight: 675,
+    maxWidth: 960,)
+    setState(() {
+      this.file = file;
+    });
+  }
+
+  //Uint8List? _file;
   bool isLoading = false;
   final TextEditingController _descriptionController = TextEditingController();
 
@@ -26,17 +41,18 @@ class _AddPostScreenState extends State<AddPostScreen> {
       context: parentContext,
       builder: (BuildContext context) {
         return SimpleDialog(
-          title: Text("Create Post"),
+          title: Text("Create a Post"),
           children: <Widget>[
             SimpleDialogOption(
               padding: EdgeInsets.all(20),
               child: Text("Take a photo"),
               onPressed: () async {
-                // Navigator.of(context).pop();
+                handleTakePhoto();
+               /* Navigator.of(context).pop();
                 Uint8List file = await pickImage(ImageSource.camera);
                 setState(() {
                   _file = file;
-                });
+                });*/
               },
             ),
             SimpleDialogOption(
@@ -44,9 +60,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 child: Text("Choose from Gallery"),
                 onPressed: () async {
                   Navigator.of(context).pop();
-                  Uint8List file = await pickImage(
-                    ImageSource.gallery,
-                  );
+                  Uint8List file = await pickImage(ImageSource.gallery);
                   setState(() {
                     _file = file;
                   });
@@ -133,14 +147,12 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 icon: Icon(Icons.arrow_back_ios),
                 onPressed: clearImage,
               ),
-              title: Text("Post to"),
+              title: Text(
+                "Post to",
+              ),
+              centerTitle: false,
               actions: <Widget>[
                 TextButton(
-                  onPressed: () => postImage(
-                    userProvider.getUser!.uid,
-                    userProvider.getUser!.username,
-                    userProvider.getUser!.photoUrl,
-                  ),
                   child: Text(
                     "Post",
                     style: TextStyle(
@@ -148,7 +160,12 @@ class _AddPostScreenState extends State<AddPostScreen> {
                         fontWeight: FontWeight.bold,
                         fontSize: 16.0),
                   ),
-                )
+                  onPressed: () => postImage(
+                    userProvider.getUser.uid,
+                    userProvider.getUser.username,
+                    userProvider.getUser.photoUrl,
+                  ),
+                ),
               ],
             ),
             body: Column(
@@ -162,13 +179,14 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     CircleAvatar(
-                        backgroundImage: AssetImage('assets/tiktok.png')
-                        /* NetworkImage(
+                      backgroundImage: AssetImage('assets/tiktok.png'),
+                      /*  NetworkImage(
                         userProvider.getUser.photoUrl,
-                      ),*/
-                        ),
+                      ),
+*/
+                    ),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.45,
+                      width: MediaQuery.of(context).size.width * 0.3,
                       child: TextField(
                         controller: _descriptionController,
                         decoration: const InputDecoration(

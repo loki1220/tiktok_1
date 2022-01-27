@@ -6,7 +6,7 @@ const webScreenSize = 600;
 List<Widget> homeScreenItems = [
   Text("feed"),
   Text("search"),
-  const AddPostScreen(),
-  Text("Notify"),
+  AddPostScreen(),
+  Text("notify"),
   Text("Profile"),
 ];
