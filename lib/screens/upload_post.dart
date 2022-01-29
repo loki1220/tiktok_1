@@ -1,38 +1,64 @@
-import 'dart:html';
+import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:tiktok/models/post.dart';
 import 'package:tiktok/providers/user_providers.dart';
+import 'package:tiktok/resources/auth_methods.dart';
 import 'package:tiktok/resources/firestore_methods.dart';
 import 'package:tiktok/utils/colors.dart';
 import 'package:tiktok/utils/utils.dart';
 
-class AddPostScreen extends StatefulWidget {
-  const AddPostScreen({Key? key}) : super(key: key);
+class UploadPost extends StatefulWidget {
+  const UploadPost({Key? key}) : super(key: key);
 
   @override
-  _AddPostScreenState createState() => _AddPostScreenState();
+  _UploadPostState createState() => _UploadPostState();
 }
 
-class _AddPostScreenState extends State<AddPostScreen> {
+class _UploadPostState extends State<UploadPost> {
+  @override
+  void initState() {
+    _fetch();
+    super.initState();
+  }
+
+  String photoUrl = "",
+      userName = "",
+      description = "",
+      time = "",
+      user_id = "";
 
   late File file;
 
-
-  handleTakePhoto() async{
+  /* handleTakePhoto() async {
     Navigator.pop(context);
-    File file = await ImagePicker.pickImage(source: ImageSource.camera,
-    maxHeight: 675,
-    maxWidth: 960,)
+    File file = await ImagePicker.pickImage(
+      source: ImageSource.camera,
+      maxHeight: 675,
+      maxWidth: 960,
+    );
     setState(() {
       this.file = file;
     });
-  }
+  }*/
 
-  //Uint8List? _file;
+  /*handleChooseFromGallery() async {
+    Navigator.pop(context);
+    File file = await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      this.file = file;
+    });
+  }*/
+
+  Uint8List? _file;
+
   bool isLoading = false;
   final TextEditingController _descriptionController = TextEditingController();
 
@@ -46,19 +72,20 @@ class _AddPostScreenState extends State<AddPostScreen> {
             SimpleDialogOption(
               padding: EdgeInsets.all(20),
               child: Text("Take a photo"),
-              onPressed: () async {
-                handleTakePhoto();
-               /* Navigator.of(context).pop();
+              onPressed: //handleTakePhoto
+                  () async {
+                Navigator.of(context).pop();
                 Uint8List file = await pickImage(ImageSource.camera);
                 setState(() {
                   _file = file;
-                });*/
+                });
               },
             ),
             SimpleDialogOption(
                 padding: EdgeInsets.all(20),
                 child: Text("Choose from Gallery"),
-                onPressed: () async {
+                onPressed: //handleChooseFromGallery
+                    () async {
                   Navigator.of(context).pop();
                   Uint8List file = await pickImage(ImageSource.gallery);
                   setState(() {
@@ -160,11 +187,12 @@ class _AddPostScreenState extends State<AddPostScreen> {
                         fontWeight: FontWeight.bold,
                         fontSize: 16.0),
                   ),
-                  onPressed: () => postImage(
+                  onPressed: () => uploadData(),
+                  /* postImage(
                     userProvider.getUser.uid,
                     userProvider.getUser.username,
                     userProvider.getUser.photoUrl,
-                  ),
+                  ),*/
                 ),
               ],
             ),
@@ -178,13 +206,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    CircleAvatar(
-                      backgroundImage: AssetImage('assets/tiktok.png'),
-                      /*  NetworkImage(
-                        userProvider.getUser.photoUrl,
-                      ),
-*/
-                    ),
+                    if (photoUrl != "")
+                      CircleAvatar(backgroundImage: NetworkImage(photoUrl)),
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.3,
                       child: TextField(
@@ -216,5 +239,60 @@ class _AddPostScreenState extends State<AddPostScreen> {
               ],
             ),
           );
+  }
+
+  Future<void> uploadData() async {
+    try {
+      String docId = FirebaseFirestore.instance.collection('posts').doc().id;
+
+      Post post = Post(
+        description: _descriptionController.text,
+        uid: user_id,
+        username: userName,
+        likes: [],
+        postId: docId,
+        datePublished: DateTime.now(),
+        postUrl: "",
+        profImage: photoUrl,
+      );
+
+      FirebaseFirestore.instance
+          .collection('posts')
+          .doc(docId)
+          .set(post.toJson());
+
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(user_id)
+          .collection("MyPosts")
+          .doc(docId)
+          .set(post.toJson());
+
+      print('success');
+    } catch (e) {
+      String res = e.toString();
+      print('error got : ' + res);
+    }
+  }
+
+  _fetch() async {
+    final firebaseUser = await FirebaseAuth.instance.currentUser;
+    if (firebaseUser != null) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(firebaseUser.uid)
+          .get()
+          .then((ds) async {
+        setState(() {
+          photoUrl = ds.data()!["photoUrl"];
+          userName = ds.data()!["username"];
+          user_id = ds.data()!["uid"];
+
+          Fluttertoast.showToast(msg: photoUrl);
+        });
+      }).catchError((e) {
+        print(e);
+      });
+    }
   }
 }

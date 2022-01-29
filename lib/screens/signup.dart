@@ -58,7 +58,7 @@ class _SignupPageState extends State<SignupPage> {
         fullname: fullNameEditingController.text,
         username: userNameEditingController.text,
         phone: numEditingController.text,
-        file: _image);
+        file: _image!);
 
     if (res == "success") {
       setState(() {
@@ -83,105 +83,6 @@ class _SignupPageState extends State<SignupPage> {
       _image = im;
     });
   }
-
-/*
-  Widget importProfile() {
-    return Center(
-      child: Stack(
-        children: <Widget>[
-          CircleAvatar(
-              radius: 60.0, backgroundImage: AssetImage("assets/profile.png")),
-          Positioned(
-            bottom: 0,
-            right: 10.0,
-            child: InkWell(
-              onTap: () {
-                showModalBottomSheet(
-                  context: context,
-                  builder: ((builder) => bottomSheet()),
-                );
-              },
-              child: Container(
-                height: 35,
-                width: 35.0,
-                decoration: (BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.blueGrey,
-                )),
-                child: Icon(
-                  Icons.camera_alt,
-                  color: Colors.black,
-                  size: 18.0,
-                ),
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  void takePhoto(ImageSource source) async {
-    final pickedFile = await _picker.pickImage(
-      source: source,
-    );
-    setState(() {
-      _imageFile = pickedFile as PickedFile?;
-    });
-  }
-
-  Widget bottomSheet() {
-    return Container(
-      height: 100.0,
-      width: MediaQuery.of(context).size.width,
-      margin: EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 20,
-      ),
-      child: Column(
-        children: <Widget>[
-          Text(
-            "Choose Photo from Gallery",
-            style: TextStyle(
-              fontSize: 20.0,
-            ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              FlatButton.icon(
-                icon: Icon(Icons.camera),
-                onPressed: () {
-                  takePhoto(ImageSource.camera);
-                },
-                label: Text("Camera"),
-              ),
-              FlatButton.icon(
-                icon: Icon(Icons.image),
-                onPressed: () {
-                  takePhoto(ImageSource.gallery);
-                },
-                label: Text("Gallery"),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 80),
-                child: IconButton(
-                  icon: Icon(Icons.delete_forever),
-                  onPressed: () {
-                    print('removed');
-                  },
-                ),
-              ),
-            ],
-          )
-        ],
-      ),
-    );
-  }
-*/
 
   @override
   Widget build(BuildContext context) {
