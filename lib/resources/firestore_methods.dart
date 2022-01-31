@@ -9,7 +9,7 @@ class FireStoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   //upload post
-  Future<String> uploadPost(String description, Uint8List file, String uid,
+  /* Future<String> uploadPost(String description, Uint8List file, String uid,
       String username, String profImage) async {
     // asking uid here because we dont want to make extra calls to firebase auth when we can just get from our state management
     String res = "Some error occurred";
@@ -37,7 +37,7 @@ class FireStoreMethods {
       res = err.toString();
     }
     return res;
-  }
+  }*/
 
   Future<String> likePost(String postId, String uid, List likes) async {
     String res = "Some error occurred";

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tiktok/resources/storage_methods.dart';
 import 'package:tiktok/models/user.dart' as model;
 
@@ -58,6 +59,7 @@ class AuthMethods {
             .collection("users")
             .doc(cred.user!.uid)
             .set(_user.toJson());
+        Fluttertoast.showToast(msg: "Account created Successfully :) ");
 
         res = "success";
       } else {
@@ -67,5 +69,9 @@ class AuthMethods {
       return err.toString();
     }
     return res;
+  }
+
+  Future<void> signOut() async {
+    await _auth.signOut();
   }
 }

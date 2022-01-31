@@ -27,6 +27,7 @@ class _SignupPageState extends State<SignupPage> {
 
   // our form key
   final _formKey = GlobalKey<FormState>();
+
   // editing Controller
   final fullNameEditingController = TextEditingController();
   final userNameEditingController = TextEditingController();
@@ -88,121 +89,120 @@ class _SignupPageState extends State<SignupPage> {
   Widget build(BuildContext context) {
     //first name field
     final firstNameField = TextFormField(
-        autofocus: false,
-        controller: fullNameEditingController,
-        keyboardType: TextInputType.name,
-        validator: (value) {
-          RegExp regex = RegExp(r'^.{3,}$');
-          if (value!.isEmpty) {
-            return ("Full Name cannot be Empty");
-          }
-          if (!regex.hasMatch(value)) {
-            return ("Enter Valid name(Min. 3 Character)");
-          }
-          return null;
-        },
-        onSaved: (value) {
-          fullNameEditingController.text = value!;
-        },
-        maxLength: 30,
-        textInputAction: TextInputAction.next,
-        decoration: InputDecoration(
-          counterText: "",
-          prefixIcon: Icon(Icons.account_circle),
-          contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-          enabledBorder:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          border:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          labelText: "Full Name",
-        ));
+      autofocus: false,
+      controller: fullNameEditingController,
+      keyboardType: TextInputType.name,
+      validator: (value) {
+        RegExp regex = RegExp(r'^.{3,}$');
+        if (value!.isEmpty) {
+          return ("Full Name cannot be Empty");
+        }
+        if (!regex.hasMatch(value)) {
+          return ("Enter Valid name(Min. 3 Character)");
+        }
+        return null;
+      },
+      onSaved: (value) {
+        fullNameEditingController.text = value!;
+      },
+      maxLength: 30,
+      textInputAction: TextInputAction.next,
+      decoration: InputDecoration(
+        counterText: "",
+        prefixIcon: Icon(Icons.account_circle),
+        contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+        enabledBorder:
+            OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+        border: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+        labelText: "Full Name",
+      ),
+    );
 
     //second name field
     final secondNameField = TextFormField(
-        autofocus: false,
-        controller: userNameEditingController,
-        keyboardType: TextInputType.name,
-        validator: (value) {
-          if (value!.isEmpty) {
-            return ("Second Name cannot be Empty");
-          }
-          return null;
-        },
-        onSaved: (value) {
-          userNameEditingController.text = value!;
-        },
-        maxLength: 20,
-        textInputAction: TextInputAction.next,
-        decoration: InputDecoration(
-          counterText: "",
-          prefixIcon: Icon(Icons.account_circle),
-          contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-          enabledBorder:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          border:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          labelText: "User Name",
-        ));
+      autofocus: false,
+      controller: userNameEditingController,
+      keyboardType: TextInputType.name,
+      validator: (value) {
+        if (value!.isEmpty) {
+          return ("Second Name cannot be Empty");
+        }
+        return null;
+      },
+      onSaved: (value) {
+        userNameEditingController.text = value!;
+      },
+      maxLength: 20,
+      textInputAction: TextInputAction.next,
+      decoration: InputDecoration(
+        counterText: "",
+        prefixIcon: Icon(Icons.account_circle),
+        contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+        enabledBorder:
+            OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+        border: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+        labelText: "User Name",
+      ),
+    );
 
     //email field
     final emailField = TextFormField(
-        autofocus: false,
-        controller: emailEditingController,
-        keyboardType: TextInputType.emailAddress,
-        validator: (value) {
-          if (value!.isEmpty) {
-            return ("Please Enter Your Email");
-          }
-          // reg expression for email validation
-          if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
-              .hasMatch(value)) {
-            return ("Please Enter a valid email");
-          }
-          return null;
-        },
-        onSaved: (value) {
-          fullNameEditingController.text = value!;
-        },
-        textInputAction: TextInputAction.next,
-        decoration: InputDecoration(
-          prefixIcon: Icon(Icons.mail),
-          contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-          enabledBorder:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          border:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          labelText: "Email Address",
-        ));
+      autofocus: false,
+      controller: emailEditingController,
+      keyboardType: TextInputType.emailAddress,
+      validator: (value) {
+        if (value!.isEmpty) {
+          return ("Please Enter Your Email");
+        }
+        // reg expression for email validation
+        if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]").hasMatch(value)) {
+          return ("Please Enter a valid email");
+        }
+        return null;
+      },
+      onSaved: (value) {
+        fullNameEditingController.text = value!;
+      },
+      textInputAction: TextInputAction.next,
+      decoration: InputDecoration(
+        prefixIcon: Icon(Icons.mail),
+        contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+        enabledBorder:
+            OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+        border: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+        labelText: "Email Address",
+      ),
+    );
 
     //num field
     final numField = TextFormField(
-        autofocus: false,
-        controller: numEditingController,
-        keyboardType: TextInputType.number,
-        maxLength: 10,
-        validator: (value) {
-          if (value!.isEmpty) {
-            return ("Please enter a number");
-          }
-          ;
-          if (value.length < 10) {
-            return ("Enter 10 digits");
-          }
-        },
-        onSaved: (value) {
-          fullNameEditingController.text = value!;
-        },
-        textInputAction: TextInputAction.next,
-        decoration: InputDecoration(
-          counterText: "",
-          prefixIcon: Icon(Icons.phone),
-          contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-          enabledBorder:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          border:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          labelText: "Phone Number",
-        ));
+      autofocus: false,
+      controller: numEditingController,
+      keyboardType: TextInputType.number,
+      maxLength: 10,
+      validator: (value) {
+        if (value!.isEmpty) {
+          return ("Please enter a number");
+        }
+        ;
+        if (value.length < 10) {
+          return ("Enter 10 digits");
+        }
+      },
+      onSaved: (value) {
+        fullNameEditingController.text = value!;
+      },
+      textInputAction: TextInputAction.next,
+      decoration: InputDecoration(
+        counterText: "",
+        prefixIcon: Icon(Icons.phone),
+        contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+        enabledBorder:
+            OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+        border: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+        labelText: "Phone Number",
+      ),
+    );
 
     //password field
     final passwordField = TextFormField(

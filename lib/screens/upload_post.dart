@@ -7,11 +7,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
 import 'package:tiktok/models/post.dart';
-import 'package:tiktok/providers/user_providers.dart';
-import 'package:tiktok/resources/auth_methods.dart';
-import 'package:tiktok/resources/firestore_methods.dart';
+import 'package:tiktok/resources/storage_methods.dart';
 import 'package:tiktok/utils/colors.dart';
 import 'package:tiktok/utils/utils.dart';
 
@@ -33,29 +30,10 @@ class _UploadPostState extends State<UploadPost> {
       userName = "",
       description = "",
       time = "",
-      user_id = "";
+      user_id = "",
+      profImage = "";
 
   late File file;
-
-  /* handleTakePhoto() async {
-    Navigator.pop(context);
-    File file = await ImagePicker.pickImage(
-      source: ImageSource.camera,
-      maxHeight: 675,
-      maxWidth: 960,
-    );
-    setState(() {
-      this.file = file;
-    });
-  }*/
-
-  /*handleChooseFromGallery() async {
-    Navigator.pop(context);
-    File file = await ImagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      this.file = file;
-    });
-  }*/
 
   Uint8List? _file;
 
@@ -105,7 +83,85 @@ class _UploadPostState extends State<UploadPost> {
     );
   }
 
-  void postImage(String uid, String username, String profImage) async {
+  Future<String> uploadData() async {
+    String res = "Some error";
+    try {
+      String docId = FirebaseFirestore.instance.collection('posts').doc().id;
+
+      String profImage =
+          await StorageMethods().uploadImageToStorage('posts', _file!, false);
+
+      Post post = Post(
+        description: _descriptionController.text,
+        uid: user_id,
+        username: userName,
+        likes: [],
+        postId: docId,
+        datePublished: DateTime.now(),
+        postUrl: profImage,
+        profImage: photoUrl,
+      );
+
+      FirebaseFirestore.instance
+          .collection('posts')
+          .doc(docId)
+          .set(post.toJson());
+
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(user_id)
+          .collection("MyPosts")
+          .doc(docId)
+          .set(post.toJson());
+      res = "Success";
+
+      if (res == "Success") {
+        setState(() {
+          isLoading = false;
+        });
+        showSnackBar(
+          context,
+          'Posted! :)',
+        );
+        clearImage();
+      } else {
+        showSnackBar(context, res);
+      }
+    } catch (e) {
+      res = e.toString();
+      setState(() {
+        isLoading = false;
+      });
+      showSnackBar(
+        context,
+        e.toString(),
+      );
+    }
+    return res;
+  }
+
+  _fetch() async {
+    final firebaseUser = await FirebaseAuth.instance.currentUser;
+    if (firebaseUser != null) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(firebaseUser.uid)
+          .get()
+          .then((ds) async {
+        setState(() {
+          photoUrl = ds.data()!["photoUrl"];
+          userName = ds.data()!["username"];
+          user_id = ds.data()!["uid"];
+
+          Fluttertoast.showToast(msg: userName);
+        });
+      }).catchError((e) {
+        print(e);
+      });
+    }
+  }
+
+  /*void postImage(String uid, String username, String profImage) async {
     setState(() {
       isLoading = true;
     });
@@ -140,7 +196,7 @@ class _UploadPostState extends State<UploadPost> {
         err.toString(),
       );
     }
-  }
+  }*/
 
   void clearImage() {
     setState(() {
@@ -156,7 +212,7 @@ class _UploadPostState extends State<UploadPost> {
 
   @override
   Widget build(BuildContext context) {
-    final UserProvider userProvider = Provider.of<UserProvider>(context);
+    // final UserProvider userProvider = Provider.of<UserProvider>(context);
 
     return _file == null
         ? Center(
@@ -239,60 +295,5 @@ class _UploadPostState extends State<UploadPost> {
               ],
             ),
           );
-  }
-
-  Future<void> uploadData() async {
-    try {
-      String docId = FirebaseFirestore.instance.collection('posts').doc().id;
-
-      Post post = Post(
-        description: _descriptionController.text,
-        uid: user_id,
-        username: userName,
-        likes: [],
-        postId: docId,
-        datePublished: DateTime.now(),
-        postUrl: "",
-        profImage: photoUrl,
-      );
-
-      FirebaseFirestore.instance
-          .collection('posts')
-          .doc(docId)
-          .set(post.toJson());
-
-      FirebaseFirestore.instance
-          .collection('users')
-          .doc(user_id)
-          .collection("MyPosts")
-          .doc(docId)
-          .set(post.toJson());
-
-      print('success');
-    } catch (e) {
-      String res = e.toString();
-      print('error got : ' + res);
-    }
-  }
-
-  _fetch() async {
-    final firebaseUser = await FirebaseAuth.instance.currentUser;
-    if (firebaseUser != null) {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(firebaseUser.uid)
-          .get()
-          .then((ds) async {
-        setState(() {
-          photoUrl = ds.data()!["photoUrl"];
-          userName = ds.data()!["username"];
-          user_id = ds.data()!["uid"];
-
-          Fluttertoast.showToast(msg: photoUrl);
-        });
-      }).catchError((e) {
-        print(e);
-      });
-    }
   }
 }
