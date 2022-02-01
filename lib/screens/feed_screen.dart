@@ -28,40 +28,35 @@ class _FeedScreenState extends State<FeedScreen> {
               title: Text("Tiktok"),
               actions: [
                 IconButton(
+                  onPressed: () {},
                   icon: const Icon(
                     Icons.messenger_outline,
                     color: Colors.white,
                   ),
-                  onPressed: () {},
                 ),
               ],
             ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance.collection('posts').snapshots(),
-        builder: (context, snapshot) {
-          //if (snapshot.connectionState == ConnectionState.waiting) {
-          return !snapshot.hasData
-              ? Center(
-                  child: CircularProgressIndicator(),
-                )
-              : Container(
-                  child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: (snapshot.data! as QuerySnapshot).docs.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          margin: EdgeInsets.symmetric(
-                            horizontal: width > webScreenSize ? width * 0.3 : 0,
-                            vertical: width > webScreenSize ? 15 : 0,
-                          ),
-                          child: PostCard(
-                            snap: (snapshot.data! as QuerySnapshot)
-                                .docs[index]
-                                .data(),
-                          ),
-                        );
-                      }),
-                );
+        builder: (context,
+            AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          return ListView.builder(
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (ctx, index) => Container(
+              margin: EdgeInsets.symmetric(
+                horizontal: width > webScreenSize ? width * 0.3 : 0,
+                vertical: width > webScreenSize ? 15 : 0,
+              ),
+              child: PostCard(
+                snap: snapshot.data!.docs[index].data(),
+              ),
+            ),
+          );
         },
       ),
     );

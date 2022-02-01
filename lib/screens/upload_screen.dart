@@ -244,11 +244,6 @@ class _UploadPostState extends State<UploadPost> {
                         fontSize: 16.0),
                   ),
                   onPressed: () => uploadData(),
-                  /* postImage(
-                    userProvider.getUser.uid,
-                    userProvider.getUser.username,
-                    userProvider.getUser.photoUrl,
-                  ),*/
                 ),
               ],
             ),

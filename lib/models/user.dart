@@ -7,6 +7,8 @@ class User {
   final String photoUrl;
   final String email;
   final String phone;
+  final List followers;
+  final List following;
 
   const User({
     required this.fullname,
@@ -15,6 +17,8 @@ class User {
     required this.photoUrl,
     required this.email,
     required this.phone,
+    required this.followers,
+    required this.following,
   });
 
   static User fromSnap(DocumentSnapshot snap) {
@@ -27,6 +31,8 @@ class User {
       email: snapshot["email"],
       photoUrl: snapshot["photoUrl"],
       phone: snapshot["phone"],
+      followers: snapshot["followers"],
+      following: snapshot["following"],
     );
   }
 
@@ -37,5 +43,7 @@ class User {
         "email": email,
         "photoUrl": photoUrl,
         "phone": phone,
+        "followers": followers,
+        "following": following,
       };
 }

@@ -52,6 +52,8 @@ class AuthMethods {
           photoUrl: photoUrl,
           email: email,
           phone: phone,
+          following: [],
+          followers: [],
         );
 
         // adding user in our database

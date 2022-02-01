@@ -1,6 +1,92 @@
+/*import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:tiktok/utils/colors.dart';
+
+class PostCard extends StatefulWidget {
+  final snap;
+  const PostCard({
+    Key? key,
+    required this.snap,
+  }) : super(key: key);
+
+  @override
+  _PostCardState createState() => _PostCardState();
+}
+
+class _PostCardState extends State<PostCard> {
+  get snap => null;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: mobileBackgroundColor,
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 16)
+                .copyWith(right: 0),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 16,
+                  backgroundImage: NetworkImage(
+                    snap['profImage'],
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 15),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          snap['username'],
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    showDialog(context: context, builder: (context)=> Dialog(
+                      child: ListView(
+                        padding: EdgeInsets.symmetric(vertical: 16,),
+                        shrinkWrap: true,
+                        children: [
+                          'Delete',
+                        ].map((e) => InkWell(
+                          onTap: (){},
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16
+                            ),
+                            child: Text(e),
+                          ),
+                        ),
+                        ).toList(),
+                      ),
+                    ),
+                    );
+                  },
+                  icon: Icon(Icons.more_vert),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}*/
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tiktok/providers/user_providers.dart';
@@ -31,10 +117,10 @@ class _PostCardState extends State<PostCard> {
   @override
   void initState() {
     super.initState();
-    fetchCommentLen();
+    fetch();
   }
 
-  fetchCommentLen() async {
+  fetch() async {
     try {
       QuerySnapshot snap = await FirebaseFirestore.instance
           .collection('posts')
