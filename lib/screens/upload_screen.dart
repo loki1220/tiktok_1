@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tiktok/models/post.dart';
 import 'package:tiktok/resources/storage_methods.dart';
@@ -89,7 +90,7 @@ class _UploadPostState extends State<UploadPost> {
       String docId = FirebaseFirestore.instance.collection('posts').doc().id;
 
       String profImage =
-          await StorageMethods().uploadImageToStorage('posts', _file!, false);
+          await StorageMethods().uploadImageToStorage('posts', _file!, true);
 
       Post post = Post(
         description: _descriptionController.text,

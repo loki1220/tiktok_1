@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tiktok/resources/auth_methods.dart';
 import 'package:tiktok/utils/utils.dart';
@@ -80,9 +81,16 @@ class _SignupPageState extends State<SignupPage> {
   selectImage() async {
     Uint8List im = await pickImage(ImageSource.gallery);
     // set state because we need to display the image we selected on the circle avatar
-    setState(() {
-      _image = im;
-    });
+
+  }
+
+  void _cropImage(filePath) async{
+    Uint8List? croppedImage = (await ImageCropper.cropImage(sourcePath: filePath, maxHeight: 1080, maxWidth: 1080)) as Uint8List?;
+    if (croppedImage ! = null){
+      setState(() {
+        _image = croppedImage;
+      });
+    }
   }
 
   @override
@@ -391,8 +399,8 @@ class _SignupPageState extends State<SignupPage> {
                       setState(() {
                         this.imageUrl = imageUrl;
                       });
-                    }),*/
-                    /* importProfile(),
+                    }),
+                     importProfile(),
                     SizedBox(
                       height: 15,
                     ),*/
