@@ -12,7 +12,5 @@ List<Widget> homeScreenItems = [
   Text("search"),
   UploadPost(),
   Notify(),
-  ProfileScreen(
-    uid: FirebaseAuth.instance.currentUser!.uid,
-  ),
+  ProfileScreen(),
 ];

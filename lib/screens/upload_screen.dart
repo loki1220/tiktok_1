@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tiktok/layouts/mobile_screen_layout.dart';
 import 'package:tiktok/models/post.dart';
 import 'package:tiktok/resources/storage_methods.dart';
 import 'package:tiktok/utils/colors.dart';
@@ -21,6 +22,8 @@ class UploadPost extends StatefulWidget {
 }
 
 class _UploadPostState extends State<UploadPost> {
+  final bool isGallery;
+
   @override
   void initState() {
     _fetch();
@@ -55,6 +58,7 @@ class _UploadPostState extends State<UploadPost> {
                   () async {
                 Navigator.of(context).pop();
                 Uint8List file = await pickImage(ImageSource.camera);
+
                 setState(() {
                   _file = file;
                 });
@@ -84,7 +88,21 @@ class _UploadPostState extends State<UploadPost> {
     );
   }
 
+  Future onClickedButton() async {
+    final file = await Utils.pickImage(
+      isGallery: widget.isGallery,
+      cropImage: cropCustomImage,
+    );
+
+    if (file == null) return;
+    setState(() => imageFiles.add(file));
+  }
+
   Future<String> uploadData() async {
+    setState(() {
+      isLoading = true;
+    });
+
     String res = "Some error";
     try {
       String docId = FirebaseFirestore.instance.collection('posts').doc().id;
@@ -244,7 +262,9 @@ class _UploadPostState extends State<UploadPost> {
                         fontWeight: FontWeight.bold,
                         fontSize: 16.0),
                   ),
-                  onPressed: () => uploadData(),
+                  onPressed: () => uploadData().whenComplete(() =>
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => MobileScreenLayout()))),
                 ),
               ],
             ),

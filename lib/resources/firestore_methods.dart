@@ -39,7 +39,8 @@ class FireStoreMethods {
     return res;
   }*/
 
-  Future<String> likePost(String postId, String uid, List likes) async {
+  Future<String> likePost(
+      String postId, String user_id, String uid, List likes) async {
     String res = "Some error occurred";
     try {
       if (likes.contains(uid)) {
@@ -47,9 +48,27 @@ class FireStoreMethods {
         _firestore.collection('posts').doc(postId).update({
           'likes': FieldValue.arrayRemove([uid])
         });
+
+        _firestore
+            .collection('user')
+            .doc(user_id)
+            .collection("Myposts")
+            .doc(postId)
+            .update({
+          'likes': FieldValue.arrayRemove([uid])
+        });
       } else {
         // else we need to add uid to the likes array
         _firestore.collection('posts').doc(postId).update({
+          'likes': FieldValue.arrayUnion([uid])
+        });
+
+        _firestore
+            .collection('user')
+            .doc(user_id)
+            .collection("Myposts")
+            .doc(postId)
+            .update({
           'likes': FieldValue.arrayUnion([uid])
         });
       }

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -162,6 +163,7 @@ class _PostCardState extends State<PostCard> {
             onDoubleTap: () {
               FireStoreMethods().likePost(
                 widget.snap['postId'].toString(),
+                FirebaseAuth.instance.currentUser!.uid.toString(),
                 user.uid,
                 widget.snap['likes'],
               );
@@ -220,6 +222,7 @@ class _PostCardState extends State<PostCard> {
                         ),
                   onPressed: () => FireStoreMethods().likePost(
                     widget.snap['postId'].toString(),
+                    FirebaseAuth.instance.currentUser!.uid.toString(),
                     user.uid,
                     widget.snap['likes'],
                   ),

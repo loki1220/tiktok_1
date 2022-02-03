@@ -81,20 +81,24 @@ class _SignupPageState extends State<SignupPage> {
   selectImage() async {
     Uint8List im = await pickImage(ImageSource.gallery);
     // set state because we need to display the image we selected on the circle avatar
-
+    setState(() {
+      _image = im;
+    });
   }
 
-  void _cropImage(filePath) async{
+  /*void _cropImage(filePath) async{
     Uint8List? croppedImage = (await ImageCropper.cropImage(sourcePath: filePath, maxHeight: 1080, maxWidth: 1080)) as Uint8List?;
     if (croppedImage ! = null){
       setState(() {
         _image = croppedImage;
       });
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
     //first name field
     final firstNameField = TextFormField(
       autofocus: false,
@@ -132,8 +136,12 @@ class _SignupPageState extends State<SignupPage> {
       controller: userNameEditingController,
       keyboardType: TextInputType.name,
       validator: (value) {
+        RegExp regex = RegExp(r'^.{3,}$');
         if (value!.isEmpty) {
-          return ("Second Name cannot be Empty");
+          return ("User Name is Must!");
+        }
+        if (!regex.hasMatch(value)) {
+          return ("Enter Valid name(Min. 3 Character)");
         }
         return null;
       },
@@ -214,39 +222,40 @@ class _SignupPageState extends State<SignupPage> {
 
     //password field
     final passwordField = TextFormField(
-        autofocus: false,
-        controller: passwordEditingController,
-        obscureText: _secureText,
-        validator: (value) {
-          RegExp regex = new RegExp(r'^.{6,}$');
-          if (value!.isEmpty) {
-            return ("Password is required for login");
-          }
-          if (!regex.hasMatch(value)) {
-            return ("Enter Valid Password(Min. 6 Character)");
-          }
-        },
-        onSaved: (value) {
-          fullNameEditingController.text = value!;
-        },
-        textInputAction: TextInputAction.next,
-        decoration: InputDecoration(
-          prefixIcon: Icon(Icons.vpn_key),
-          suffixIcon: IconButton(
-            icon: Icon(_secureText ? Icons.remove_red_eye : Icons.security),
-            onPressed: () {
-              setState(() {
-                _secureText = !_secureText;
-              });
-            },
-          ),
-          contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-          enabledBorder:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          border:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          labelText: "Password",
-        ));
+      autofocus: false,
+      controller: passwordEditingController,
+      obscureText: _secureText,
+      validator: (value) {
+        RegExp regex = new RegExp(
+            r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+        if (value!.isEmpty) {
+          return ("Password is required for login");
+        }
+        if (!regex.hasMatch(value)) {
+          return ("Enter (Min. 8 letter, 1 Caps letter, 1 special letter, 1 Num)");
+        }
+      },
+      onSaved: (value) {
+        fullNameEditingController.text = value!;
+      },
+      textInputAction: TextInputAction.next,
+      decoration: InputDecoration(
+        prefixIcon: Icon(Icons.vpn_key),
+        suffixIcon: IconButton(
+          icon: Icon(_secureText ? Icons.remove_red_eye : Icons.security),
+          onPressed: () {
+            setState(() {
+              _secureText = !_secureText;
+            });
+          },
+        ),
+        contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+        enabledBorder:
+            OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+        border: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+        labelText: "Password",
+      ),
+    );
 
     //confirm password field
     final confirmPasswordField = TextFormField(
@@ -294,6 +303,10 @@ class _SignupPageState extends State<SignupPage> {
           height: 60,
           elevation: 5,
           onPressed: () {
+            if (_formKey.currentState!.validate()) {
+              final snackBar = SnackBar(content: Text('Submitting form'));
+              _scaffoldKey.currentState!.showSnackBar(snackBar);
+            }
             signUpUser();
           },
           child: Container(
