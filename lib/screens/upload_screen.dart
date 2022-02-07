@@ -22,7 +22,7 @@ class UploadPost extends StatefulWidget {
 }
 
 class _UploadPostState extends State<UploadPost> {
-  final bool isGallery;
+  //final bool isGallery;
 
   @override
   void initState() {
@@ -41,6 +41,8 @@ class _UploadPostState extends State<UploadPost> {
 
   Uint8List? _file;
 
+  final picker = ImagePicker();
+
   bool isLoading = false;
   final TextEditingController _descriptionController = TextEditingController();
 
@@ -54,27 +56,88 @@ class _UploadPostState extends State<UploadPost> {
             SimpleDialogOption(
               padding: EdgeInsets.all(20),
               child: Text("Take a photo"),
-              onPressed: //handleTakePhoto
-                  () async {
-                Navigator.of(context).pop();
-                Uint8List file = await pickImage(ImageSource.camera);
-
+              onPressed: () async {
+                /*Uint8List file = await pickImage(ImageSource.camera);
                 setState(() {
                   _file = file;
-                });
+                });*/
+                Navigator.of(context).pop();
+                final pickedFile =
+                    await picker.pickImage(source: ImageSource.camera);
+                if (pickedFile != null) {
+                  File? croppedFile = await ImageCropper.cropImage(
+                    sourcePath: pickedFile.path,
+                    aspectRatioPresets: [
+                      CropAspectRatioPreset.square,
+                      CropAspectRatioPreset.ratio3x2,
+                      CropAspectRatioPreset.ratio4x3,
+                      CropAspectRatioPreset.ratio16x9
+                    ],
+                    androidUiSettings: AndroidUiSettings(
+                      toolbarTitle: 'Cropper',
+                      toolbarColor: Colors.black,
+                      toolbarWidgetColor: Colors.white,
+                      activeControlsWidgetColor: Colors.teal,
+                      initAspectRatio: CropAspectRatioPreset.original,
+                      lockAspectRatio: false,
+                    ),
+                    iosUiSettings: IOSUiSettings(
+                      minimumAspectRatio: 1.0,
+                    ),
+                  );
+                  if (croppedFile != null) {
+                    //File imageFile = File(croppedFile.toString());
+                    Uint8List imageRaw = await croppedFile.readAsBytes();
+                    setState(() {
+                      _file = imageRaw;
+                      print('this is file path = $_file');
+                    });
+                  }
+                }
               },
             ),
             SimpleDialogOption(
-                padding: EdgeInsets.all(20),
-                child: Text("Choose from Gallery"),
-                onPressed: //handleChooseFromGallery
-                    () async {
-                  Navigator.of(context).pop();
-                  Uint8List file = await pickImage(ImageSource.gallery);
-                  setState(() {
-                    _file = file;
-                  });
-                }),
+              padding: EdgeInsets.all(20),
+              child: Text("Choose from Gallery"),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                final pickedFile =
+                    await picker.pickImage(source: ImageSource.gallery);
+                if (pickedFile != null) {
+                  File? croppedFile = await ImageCropper.cropImage(
+                    sourcePath: pickedFile.path,
+                    aspectRatioPresets: [
+                      CropAspectRatioPreset.square,
+                      CropAspectRatioPreset.ratio3x2,
+                      CropAspectRatioPreset.ratio4x3,
+                      CropAspectRatioPreset.ratio16x9
+                    ],
+                    androidUiSettings: AndroidUiSettings(
+                      toolbarTitle: 'Cropper',
+                      toolbarColor: Colors.black,
+                      toolbarWidgetColor: Colors.white,
+                      activeControlsWidgetColor: Colors.teal,
+                      initAspectRatio: CropAspectRatioPreset.original,
+                      lockAspectRatio: false,
+                    ),
+                    iosUiSettings: IOSUiSettings(
+                      minimumAspectRatio: 1.0,
+                    ),
+                  );
+                  if (croppedFile != null) {
+                    Uint8List imageRaw = await croppedFile.readAsBytes();
+                    setState(() {
+                      _file = imageRaw;
+                      print('this is file path = $_file');
+                    });
+                  }
+                }
+                /* Uint8List file = await pickImage(ImageSource.gallery);
+                setState(() {
+                  _file = file;
+                });*/
+              },
+            ),
             SimpleDialogOption(
               padding: const EdgeInsets.all(20),
               child: const Text("Cancel"),
@@ -86,16 +149,6 @@ class _UploadPostState extends State<UploadPost> {
         );
       },
     );
-  }
-
-  Future onClickedButton() async {
-    final file = await Utils.pickImage(
-      isGallery: widget.isGallery,
-      cropImage: cropCustomImage,
-    );
-
-    if (file == null) return;
-    setState(() => imageFiles.add(file));
   }
 
   Future<String> uploadData() async {
@@ -180,43 +233,6 @@ class _UploadPostState extends State<UploadPost> {
     }
   }
 
-  /*void postImage(String uid, String username, String profImage) async {
-    setState(() {
-      isLoading = true;
-    });
-    // start the loading
-    try {
-      // upload to storage and db
-      String res = await FireStoreMethods().uploadPost(
-        _descriptionController.text,
-        _file!,
-        uid,
-        username,
-        profImage,
-      );
-      if (res == "success") {
-        setState(() {
-          isLoading = false;
-        });
-        showSnackBar(
-          context,
-          'Posted!',
-        );
-        clearImage();
-      } else {
-        showSnackBar(context, res);
-      }
-    } catch (err) {
-      setState(() {
-        isLoading = false;
-      });
-      showSnackBar(
-        context,
-        err.toString(),
-      );
-    }
-  }*/
-
   void clearImage() {
     setState(() {
       _file = null;
@@ -234,6 +250,7 @@ class _UploadPostState extends State<UploadPost> {
     // final UserProvider userProvider = Provider.of<UserProvider>(context);
 
     return _file == null
+        //return imagePath != ""
         ? Center(
             child: IconButton(
               icon: const Icon(
