@@ -205,6 +205,7 @@ class _PostCardState extends State<PostCard> {
               ],
             ),
           ),
+
           // LIKE, COMMENT SECTION OF THE POST
           Row(
             children: <Widget>[
@@ -230,7 +231,7 @@ class _PostCardState extends State<PostCard> {
               ),
               IconButton(
                 icon: const Icon(
-                  Icons.comment_outlined,
+                  Icons.mode_comment_outlined,
                 ),
                 onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute(
