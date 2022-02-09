@@ -2,10 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiktok/providers/user_providers.dart';
-import 'package:tiktok/screens/upload_screen.dart';
 import 'package:tiktok/screens/home.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:tiktok/screens/welcome_page.dart';
 import 'package:tiktok/utils/colors.dart';
 
 import 'layouts/mobile_screen_layout.dart';
@@ -49,7 +47,7 @@ class MyApp extends StatelessWidget {
               }
             }
 
-            // means connection to future hasnt been made yet
+            // means connection to future has not been made yet
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: CircularProgressIndicator(),
@@ -64,6 +62,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/*
 class InitializerWidget extends StatefulWidget {
   const InitializerWidget({Key? key}) : super(key: key);
 
@@ -96,3 +95,4 @@ class _InitializerWidgetState extends State<InitializerWidget> {
             : WelcomePage();
   }
 }
+*/

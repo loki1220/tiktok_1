@@ -77,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               title: Text(
                 userData['username'],
               ),
-              centerTitle: false, b
+              centerTitle: false,
             ),
             body: ListView(
               children: [

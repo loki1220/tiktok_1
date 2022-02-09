@@ -55,7 +55,7 @@ class _UploadPostState extends State<UploadPost> {
           children: <Widget>[
             SimpleDialogOption(
               padding: EdgeInsets.all(20),
-              child: Text("Take a photo"),
+              child: Text("Take a Photo"),
               onPressed: () async {
                 /*Uint8List file = await pickImage(ImageSource.camera);
                 setState(() {
@@ -98,7 +98,7 @@ class _UploadPostState extends State<UploadPost> {
             ),
             SimpleDialogOption(
               padding: EdgeInsets.all(20),
-              child: Text("Choose from Gallery"),
+              child: Text("Photo from Gallery"),
               onPressed: () async {
                 Navigator.of(context).pop();
                 final pickedFile =
@@ -144,7 +144,82 @@ class _UploadPostState extends State<UploadPost> {
               onPressed: () {
                 Navigator.pop(context);
               },
-            )
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  _selectVideo(BuildContext parentContext) async {
+    return showDialog(
+      context: parentContext,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          title: Text("Create a Video Post"),
+          children: <Widget>[
+            SimpleDialogOption(
+              padding: const EdgeInsets.all(20),
+              child: const Text("Take a Video"),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                final file = await picker.pickVideo(source: ImageSource.camera);
+                Uint8List imageRaw = await file!.readAsBytes();
+                setState(() {
+                  _file = imageRaw;
+                });
+              },
+            ),
+            SimpleDialogOption(
+              padding: const EdgeInsets.all(20),
+              child: const Text("Video from Gallery"),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                final file =
+                    await picker.pickVideo(source: ImageSource.gallery);
+                Uint8List imageRaw = await file!.readAsBytes();
+                setState(() {
+                  _file = imageRaw;
+                });
+              },
+            ),
+            SimpleDialogOption(
+              padding: const EdgeInsets.all(20),
+              child: const Text("Cancel"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  _selectAudio(BuildContext parentContext) async {
+    return showDialog(
+      context: parentContext,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          title: Text("Create a Audio Post"),
+          children: <Widget>[
+            SimpleDialogOption(
+              padding: const EdgeInsets.all(20),
+              child: const Text("Record a Audio"),
+              onPressed: () {},
+            ),
+            SimpleDialogOption(
+              padding: const EdgeInsets.all(20),
+              child: const Text("Audio from Files"),
+              onPressed: () {},
+            ),
+            SimpleDialogOption(
+              padding: const EdgeInsets.all(20),
+              child: const Text("Cancel"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
           ],
         );
       },
@@ -250,13 +325,40 @@ class _UploadPostState extends State<UploadPost> {
     // final UserProvider userProvider = Provider.of<UserProvider>(context);
 
     return _file == null
-        //return imagePath != ""
         ? Center(
-            child: IconButton(
-              icon: const Icon(
-                Icons.upload,
-              ),
-              onPressed: () => _selectImage(context),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(
+                    Icons.add_photo_alternate_outlined,
+                  ),
+                  onPressed: () => _selectImage(context),
+                ),
+                SizedBox(
+                  height: 18,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      icon: const Icon(
+                        Icons.slow_motion_video_sharp,
+                      ),
+                      onPressed: () => _selectVideo(context),
+                    ),
+                    SizedBox(
+                      width: 25,
+                    ),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.audiotrack,
+                      ),
+                      onPressed: () => _selectAudio(context),
+                    ),
+                  ],
+                )
+              ],
             ),
           )
         : Scaffold(

@@ -61,7 +61,7 @@ class _ForgotPassState extends State<ForgotPass> {
 
     //password field
 
-    final loginButton = Material(
+    final verifyButton = Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
       color: Colors.white54,
@@ -133,7 +133,7 @@ class _ForgotPassState extends State<ForgotPass> {
                     SizedBox(height: 45),
                     emailField,
                     SizedBox(height: 35),
-                    loginButton,
+                    verifyButton,
                     SizedBox(height: 25),
                     RichText(
                       text: TextSpan(
