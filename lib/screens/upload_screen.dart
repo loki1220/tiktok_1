@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:tiktok/layouts/mobile_screen_layout.dart';
 import 'package:tiktok/models/post.dart';
 import 'package:tiktok/resources/storage_methods.dart';
+import 'package:tiktok/screens/video_screen.dart';
 import 'package:tiktok/utils/colors.dart';
 import 'package:tiktok/utils/utils.dart';
 
@@ -162,7 +164,9 @@ class _UploadPostState extends State<UploadPost> {
               padding: const EdgeInsets.all(20),
               child: const Text("Take a Video"),
               onPressed: () async {
-                Navigator.of(context).pop();
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => VideoScreen()));
+                //Navigator.of(context).pop();
                 final file = await picker.pickVideo(source: ImageSource.camera);
                 Uint8List imageRaw = await file!.readAsBytes();
                 setState(() {
@@ -206,7 +210,15 @@ class _UploadPostState extends State<UploadPost> {
             SimpleDialogOption(
               padding: const EdgeInsets.all(20),
               child: const Text("Record a Audio"),
-              onPressed: () {},
+              onPressed: () async {
+                Navigator.of(context).pop();
+                final file = await FilePicker.platform.pickFiles();
+                if (file == null) return;
+                /* Uint8List imageRaw = await file.readAsBytes();
+                setState(() {
+                  _file = imageRaw;
+                });*/
+              },
             ),
             SimpleDialogOption(
               padding: const EdgeInsets.all(20),
@@ -345,7 +357,12 @@ class _UploadPostState extends State<UploadPost> {
                       icon: const Icon(
                         Icons.slow_motion_video_sharp,
                       ),
-                      onPressed: () => _selectVideo(context),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => VideoScreen()));
+                      },
                     ),
                     SizedBox(
                       width: 25,

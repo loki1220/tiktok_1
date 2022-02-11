@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_unnecessary_containers
+
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -30,7 +32,7 @@ class _AddImageState extends State<AddImage> {
           backgroundColor: Colors.black87,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.arrow_back_ios,
               color: Color(0xffE6F7FF),
               size: 20,
@@ -40,7 +42,7 @@ class _AddImageState extends State<AddImage> {
               Navigator.of(context).pop();
             },
           ),
-          title: Text(
+          title: const Text(
             'Add Image',
             style: TextStyle(color: Color(0xffE6F7FF)),
           ),
@@ -52,7 +54,7 @@ class _AddImageState extends State<AddImage> {
                   });
                   uploadFile().whenComplete(() => Navigator.of(context).pop());
                 },
-                child: Text(
+                child: const Text(
                   'upload Image',
                   style: TextStyle(color: Color(0xffE6F7FF)),
                 ))
@@ -61,16 +63,16 @@ class _AddImageState extends State<AddImage> {
         body: Stack(
           children: [
             Container(
-              padding: EdgeInsets.all(4),
+              padding: const EdgeInsets.all(4),
               child: GridView.builder(
                   itemCount: _image.length + 1,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3),
                   itemBuilder: (context, index) {
                     return index == 0
                         ? Center(
                             child: IconButton(
-                                icon: Icon(
+                                icon: const Icon(
                                   Icons.add,
                                   color: Color(0xffE6F7FF),
                                 ),
@@ -78,7 +80,7 @@ class _AddImageState extends State<AddImage> {
                                     !uploading ? chooseImage() : null),
                           )
                         : Container(
-                            margin: EdgeInsets.all(3),
+                            margin: const EdgeInsets.all(3),
                             decoration: BoxDecoration(
                                 image: DecorationImage(
                                     image: FileImage(_image[index - 1]),
@@ -92,18 +94,18 @@ class _AddImageState extends State<AddImage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        child: Text(
+                        child: const Text(
                           'uploading...',
                           style: TextStyle(fontSize: 20),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       CircularProgressIndicator(
                         value: val,
                         valueColor:
-                            AlwaysStoppedAnimation<Color>(Colors.pinkAccent),
+                            const AlwaysStoppedAnimation<Color>(Colors.pinkAccent),
                       )
                     ],
                   ))
